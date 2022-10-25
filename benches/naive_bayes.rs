@@ -2,7 +2,7 @@ use criterion::BenchmarkId;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use ndarray::Array2;
-use smartcore::linalg::base::Array2 as BaseArray2;
+use smartcore::linalg::basic::arrays::Array2 as BaseArray2;
 use smartcore::linalg::basic::matrix::DenseMatrix;
 use smartcore::naive_bayes::gaussian::GaussianNB;
 
@@ -56,14 +56,6 @@ pub fn gaussian_naive_matrix_datastructure(c: &mut Criterion) {
         })
     });
 
-    group.bench_function("ndalgebra", |b| {
-        let x = DMatrix::<f64>::rand(10000, 500);
-        let y = &classes;
-
-        b.iter(|| {
-            GaussianNB::fit(black_box(&x), black_box(y), Default::default()).unwrap();
-        })
-    });
 }
 criterion_group!(
     benches,
