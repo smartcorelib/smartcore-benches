@@ -15,7 +15,7 @@ categories = ["science"]
 [dependencies]
 smartcore = { git = "https://github.com/smartcorelib/smartcore", branch = "v0.5-wip", features = ["ndarray-bindings"] }
 itertools = { version = "0.10.3", optional = true }
-ndarray = "0.5"
+ndarray = "0.15"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.2", optional = true }
