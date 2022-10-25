@@ -11,8 +11,7 @@
 
 -----
 
-<p align = "center">
-<b>The Most Advanced Machine Learning Library In Rust.</b>
-</p>
+TODO: These benches are the ones ported out from Smartcore v0.21. They need to be fixed and adapted to v0.5 
 
------
+
+Just `cargo bench`.
