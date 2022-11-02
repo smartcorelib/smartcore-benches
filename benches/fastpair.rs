@@ -5,6 +5,32 @@ use smartcore::algorithm::neighbour::fastpair::FastPair;
 use smartcore::linalg::basic::matrix::DenseMatrix;
 use std::time::Duration;
 
+///
+/// Brute force algorithm, used only for comparison and testing
+///
+pub fn closest_pair_brute(&self) -> PairwiseDistance<T> {
+    use itertools::Itertools;
+    let m = self.samples.shape().0;
+
+    let mut closest_pair = PairwiseDistance {
+        node: 0,
+        neighbour: Option::None,
+        distance: Some(T::max_value()),
+    };
+    for pair in (0..m).combinations(2) {
+        let d = Euclidian::squared_distance(
+            &(self.samples.get_row_as_vec(pair[0])),
+            &(self.samples.get_row_as_vec(pair[1])),
+        );
+        if d < closest_pair.distance.unwrap() {
+            closest_pair.node = pair[0];
+            closest_pair.neighbour = Some(pair[1]);
+            closest_pair.distance = Some(d);
+        }
+    }
+    closest_pair
+}
+
 fn closest_pair_bench(n: usize, m: usize) -> () {
     let x = DenseMatrix::<f64>::rand(n, m);
     let fastpair = FastPair::new(&x);
