@@ -1,6 +1,5 @@
 #[macro_use]
 extern crate criterion;
-extern crate smartcore;
 
 use criterion::black_box;
 use criterion::Criterion;
