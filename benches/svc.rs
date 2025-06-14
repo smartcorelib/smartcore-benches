@@ -15,8 +15,8 @@ pub fn multiclass_svc_fit_benchmark(c: &mut Criterion) {
                 .map(|i| (i % *n_samples / 5_usize) as usize)
                 .collect::<Vec<usize>>();
             let parameters = SVCParameters::default()
-            .with_c(1.0)
-            .with_kernel(Kernels::rbf().with_gamma(0.7));
+                .with_c(1.0)
+                .with_kernel(Kernels::rbf().with_gamma(0.7));
             group.bench_with_input(
                 BenchmarkId::from_parameter(format!(
                     "n_samples: {}, n_features: {}",
@@ -34,8 +34,5 @@ pub fn multiclass_svc_fit_benchmark(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(
-    benches,
-    multiclass_svc_fit_benchmark,
-);
+criterion_group!(benches, multiclass_svc_fit_benchmark,);
 criterion_main!(benches);

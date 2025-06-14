@@ -55,7 +55,6 @@ pub fn gaussian_naive_matrix_datastructure(c: &mut Criterion) {
             GaussianNB::fit(black_box(&x), black_box(y), Default::default()).unwrap();
         })
     });
-
 }
 criterion_group!(
     benches,

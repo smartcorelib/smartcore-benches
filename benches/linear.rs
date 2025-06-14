@@ -22,7 +22,8 @@ pub fn linear_regression_fit_benchmark(c: &mut Criterion) {
                 n_samples,
                 |b, _| {
                     b.iter(|| {
-                        LinearRegression::fit(black_box(&x), black_box(&y), Default::default()).unwrap();
+                        LinearRegression::fit(black_box(&x), black_box(&y), Default::default())
+                            .unwrap();
                     })
                 },
             );
@@ -31,8 +32,5 @@ pub fn linear_regression_fit_benchmark(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(
-    benches,
-    linear_regression_fit_benchmark,
-);
+criterion_group!(benches, linear_regression_fit_benchmark,);
 criterion_main!(benches);

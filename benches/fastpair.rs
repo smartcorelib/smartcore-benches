@@ -3,17 +3,17 @@ use itertools::Itertools;
 
 // to run this bench you have to change the declaraion in mod.rs ---> pub mod fastpair;
 use smartcore::algorithm::neighbour::fastpair::FastPair;
-use smartcore::linalg::basic::arrays::{Array2, Array};
+use smartcore::linalg::basic::arrays::{Array, Array2};
 use smartcore::linalg::basic::matrix::DenseMatrix;
 use smartcore::metrics::distance::PairwiseDistance;
 use std::time::Duration;
 
 /// Utilities substitutes for benches
-/// 
+///
 
 ///
 /// return sum of squared distancs
-/// 
+///
 fn squared_distance(x: Vec<f64>, y: Vec<f64>) -> f64 {
     if x.len() != y.len() {
         panic!("Input vector sizes are different.");
@@ -31,12 +31,10 @@ fn squared_distance(x: Vec<f64>, y: Vec<f64>) -> f64 {
     sum
 }
 
-
 ///
 /// Brute force algorithm, used only for comparison and testing
 ///
-pub fn closest_pair_brute(samples: &DenseMatrix<f64>, n_samples: usize
-) -> PairwiseDistance<f64> {
+pub fn closest_pair_brute(samples: &DenseMatrix<f64>, n_samples: usize) -> PairwiseDistance<f64> {
     let mut closest_pair = PairwiseDistance {
         node: 0,
         neighbour: Option::None,
@@ -44,8 +42,16 @@ pub fn closest_pair_brute(samples: &DenseMatrix<f64>, n_samples: usize
     };
     for pair in (0..n_samples).combinations(2) {
         let d = squared_distance(
-            samples.get_row(pair[0]).iterator(0).copied().collect::<Vec<f64>>(),
-            samples.get_row(pair[1]).iterator(0).copied().collect::<Vec<f64>>(),
+            samples
+                .get_row(pair[0])
+                .iterator(0)
+                .copied()
+                .collect::<Vec<f64>>(),
+            samples
+                .get_row(pair[1])
+                .iterator(0)
+                .copied()
+                .collect::<Vec<f64>>(),
         );
         if d < closest_pair.distance.unwrap() {
             closest_pair.node = pair[0];
