@@ -13,7 +13,8 @@ keywords = ["machine-learning", "statistical", "ai", "optimization", "linear-alg
 categories = ["science"]
 
 [dependencies]
-smartcore = { version = "0.3", features = ["ndarray-bindings"] }
+smartcore = { path="../smartcore", features = ["ndarray-bindings", "datasets"] }
+# smartcore = { version = "0.3", features = ["ndarray-bindings"] }
 itertools = { version = "0.10.3"}
 ndarray = "0.15"
 criterion = { version = "0.4", default-features = false }
@@ -46,4 +47,8 @@ harness = false
 
 [[bench]]
 name = "linear"
+harness = false
+
+[[bench]]
+name = "svc"
 harness = false
