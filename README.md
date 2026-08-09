@@ -88,7 +88,7 @@ smartcore's CI fires `repository_dispatch` on every `development` push with this
 }
 ```
 
-This workflow resolves the SHA (`client_payload.sha` → `inputs.smartcore_ref` → `development`), checks smartcore out at that rev, patches the path dep via `[patch.crates-io]`, and runs both jobs.
+smartcore is resolved from crates.io (latest 0.6.x — currently 0.6.3) on every run, so the recorded history tracks the published release. The `repository_dispatch` payload carries the smartcore commit SHA only for the status-check step (not for checkout); the nightly cron provides a baseline when smartcore has no recent pushes.
 
 ### Jobs
 
@@ -113,3 +113,11 @@ Trend charts and JSON history are persisted to the `gh-pages` branch by [benchma
 ## Contributing
 
 This repo has no separate CONTRIBUTING file — follow smartcore's [CONTRIBUTING](https://github.com/smartcorelib/smartcore/blob/development/.github/CONTRIBUTING.md) and [AGENTS.md](https://github.com/smartcorelib/smartcore/blob/development/AGENTS.md) conventions (edition 2024, no `unsafe`, `#[expect]` over `#[allow]`, bind intermediates before iterating in edition-2024 tail positions). Bench code targets the same dep versions as smartcore's Cargo.toml so cargo unifies a single copy of each crate across the graph.
+
+A pre-commit hook (`.githooks/pre-commit`) mirrors the `lint.yml` gate locally — it runs `cargo fmt --check` and `cargo clippy -Dwarnings` before each commit. Install it after a fresh clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Bypass with `git commit --no-verify` when intentionally committing mid-edit.

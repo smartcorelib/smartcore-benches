@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# Pre-commit hook: fail-fast gate mirroring .github/workflows/lint.yml.
+# Runs `cargo fmt --check` and `cargo clippy -Dwarnings` so a formatting or
+# lint regression cannot be pushed (and cannot turn a green CI run red).
+#
+# Bypass with `git commit --no-verify` when intentionally committing mid-edit.
+#
+# To install after a fresh clone:
+#   git config core.hooksPath .githooks
+
+set -e
+
+echo "→ cargo fmt --all -- --check"
+cargo fmt --all -- --check
+
+echo "→ cargo clippy --all-targets -- -Dwarnings"
+cargo clippy --all-targets -- -Dwarnings
+
+echo "✓ pre-commit checks passed"

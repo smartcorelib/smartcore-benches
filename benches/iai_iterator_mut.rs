@@ -10,7 +10,7 @@
 #[cfg(target_os = "linux")]
 use iai_callgrind::{library_benchmark, library_benchmark_group, main};
 #[cfg(target_os = "linux")]
-use smartcore::linalg::basic::arrays::{Array, Array2, MutArray};
+use smartcore::linalg::basic::arrays::{Array2, MutArray};
 #[cfg(target_os = "linux")]
 use smartcore::linalg::basic::matrix::DenseMatrix;
 

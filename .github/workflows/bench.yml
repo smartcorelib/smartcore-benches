@@ -3,17 +3,22 @@ name: bench
 # Triggered by:
 #   - repository_dispatch from smartcore (event_type: smartcore-dev-push),
 #     fired when a commit lands on smartcore's `development` branch.
+#   - nightly schedule, so a baseline against the latest published smartcore
+#     on crates.io is recorded even when smartcore has no recent pushes.
 #   - workflow_dispatch (manual rerun).
 #
 # NOTE: this workflow does NOT self-trigger on pushes to smartcore-benches'
-# own `main` branch. Bench runs are tied to smartcore development commits so
-# the persisted history reflects the benchmarked library, not harness edits.
+# own `main` branch. The persisted history reflects the benchmarked library
+# version (smartcore from crates.io latest 0.6.x), not harness edits.
 # Harness changes are validated by the `harness-check` job in lint.yml.
 #
 # smartcore is resolved from crates.io (latest 0.6.x) — see Cargo.toml.
 on:
   repository_dispatch:
     types: [smartcore-dev-push]
+  schedule:
+    # 07:00 UTC daily
+    - cron: "0 7 * * *"
   workflow_dispatch:
 
 # Cancel superseded runs to conserve runner minutes.
