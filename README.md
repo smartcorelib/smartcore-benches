@@ -19,7 +19,7 @@
 
 Benchmark harness for [smartcore](https://github.com/smartcorelib/smartcore). Covers the five hot paths flagged in [smartcore#407](https://github.com/smartcorelib/smartcore/issues/407) as well as the legacy algorithm benches, and wires CI to run them on every `development` push.
 
-> **Live trend charts:** [criterion (wall-clock)](https://smartcorelib.github.io/smartcore-benches/dev/) · [iai-callgrind (instruction count, deterministic gate)](https://smartcorelib.github.io/smartcore-benches/iai-dev/) — see [Results](#results) for how to read them.
+> **Live trend charts:** ⏱️ [criterion (wall-clock)](https://smartcorelib.github.io/smartcore-benches/dev/) · 📊 [iai-callgrind (instruction count, deterministic gate)](https://smartcorelib.github.io/smartcore-benches/iai-dev/) — see [Results](#results) for how to read them. 🔍
 
 ## Local run
 
