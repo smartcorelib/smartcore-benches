@@ -19,6 +19,8 @@
 
 Benchmark harness for [smartcore](https://github.com/smartcorelib/smartcore). Covers the five hot paths flagged in [smartcore#407](https://github.com/smartcorelib/smartcore/issues/407) as well as the legacy algorithm benches, and wires CI to run them on every `development` push.
 
+> **Live trend charts:** [criterion (wall-clock)](https://smartcorelib.github.io/smartcore-benches/dev/) · [iai-callgrind (instruction count, deterministic gate)](https://smartcorelib.github.io/smartcore-benches/iai-dev/) — see [Results](#results) for how to read them.
+
 ## Local run
 
 ```bash
@@ -99,10 +101,58 @@ smartcore is resolved from crates.io (latest 0.6.x — currently 0.6.3) on every
 
 ### Results
 
-Trend charts and JSON history are persisted to the `gh-pages` branch by [benchmark-action/github-action-benchmark](https://github.com/benchmark-action/github-action-benchmark):
+There are five places to read benchmark results, each answering a different question.
 
-- criterion: `gh-pages/dev/`
-- iai-callgrind: `gh-pages/iai-dev/`
+#### 1. Live trend charts (gh-pages, web)
+
+[benchmark-action/github-action-benchmark](https://github.com/benchmark-action/github-action-benchmark) renders an interactive chart page per tool on the `gh-pages` branch, published via GitHub Pages:
+
+| Tool | Chart URL | What it plots | Direction | Alert |
+|---|---|---|---|---|
+| criterion (wall-clock) | <https://smartcorelib.github.io/smartcore-benches/dev/> | `cargo bench` wall-clock time per bench (ns/iter) over time | lower = better | 200% — advisory, posts a comment, does not fail CI |
+| iai-callgrind (instruction count) | <https://smartcorelib.github.io/smartcore-benches/iai-dev/> | instructions retired (`Ir`) per bench — deterministic, machine-independent | lower = better | 120% — fails the `iai` job + status check |
+
+Open the URLs above in a browser. Each page shows a searchable line chart (`data.js` is the raw history) with one series per benchmark name (e.g. `matmul/1024`, `iai_matmul::matmul::bench_matmul_256`). Hover for the value, range, and commit that produced each point. The iai page is the one to watch for regressions: instruction counts are deterministic on GitHub-hosted runners, so a >20% jump is a real code change, not noise.
+
+#### 2. Per-version criterion snapshots (`benches-results/`)
+
+The `criterion` job also records one frozen `criterion.json` per published smartcore version, committed to `main`:
+
+```
+benches-results/v<smartcore-version>/criterion.json
+```
+
+e.g. `benches-results/v0.6.4/criterion.json`. This is the **point-in-time** record of "what the published release measured" — useful for diffing two smartcore releases against each other rather than tracking the rolling trend. Storage is idempotent (a version is recorded at most once); see [`benches-results/README.md`](benches-results/README.md) for the storage contract.
+
+#### 3. Raw JSON artifacts (per CI run)
+
+Each run uploads its raw bench output as a CI artifact (retained per the repo's artifact policy):
+
+- `criterion-json` → `bench-output/criterion.json` (bencher format)
+- `iai-json` → `bench-output/iai.ndjson` (raw iai NDJSON) + `bench-output/iai.json` (the `customSmallerIsBetter` array the adapter produced)
+
+Download from a run page, or via `gh`:
+
+```bash
+gh run download <run-id> --repo smartcorelib/smartcore-benches -n iai-json -D ./iai-out
+gh run download <run-id> --repo smartcorelib/smartcore-benches -n criterion-json -D ./crit-out
+```
+
+The `iai.ndjson` is the upstream `summary.v3` schema (one `BenchmarkSummary` per line); `iai.json` is the `[{name,unit,value}]` array fed to benchmark-action. See `scripts/iai_to_benchmark_action.py` for the projection (`Ir` → instructions retired).
+
+#### 4. CI job status
+
+The run page itself shows pass/fail per job:
+
+- `iai` job green ⇒ instruction counts within 120% of baseline (the merge gate).
+- `criterion` job green ⇒ ran successfully; it does **not** gate (advisory only, 200% threshold).
+- The `iai` job also posts a `smartcore-benches / iai-callgrind` status check back to the smartcore commit that triggered the run (via `repository_dispatch`), so smartcore's branch protection can require it.
+
+#### 5. Alert comments on commits/PRs
+
+Both jobs have `comment-on-alert: true`, so benchmark-action posts a comment on the triggering commit when a >threshold regression is detected — look for the bot comment on the smartcore commit for the iai signal.
+
+> **Re-running a failed job** reuses the workflow file pinned to the triggering SHA, so re-running an old run whose SHA predates a fix will re-fail the same way. To validate a fix, trigger a fresh run from the new tip: `gh workflow run bench.yml --repo smartcorelib/smartcore-benches --ref main`.
 
 ### Required secrets
 
