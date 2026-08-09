@@ -91,13 +91,17 @@ Valgrind itself also needs installing on Linux runners: `sudo apt-get update && 
 cargo bench -- --output-format=json | jq -s
 ```
 
-The instruction count lives at:
+The instruction count lives at (note: **total.summary.Ir.metrics**, *not* `events.Ir.metrics` — `events` is per-segment and a bench can have many segments):
 
 ```
-summary.callgrind_summary.callgrind_run.events.Ir.metrics
+summary.callgrind_summary.callgrind_run.total.summary.Ir.metrics
 ```
 
-`events` is a `MetricsSummary_for_EventKind` — a map keyed by `EventKind` string (`"Ir"` = instructions retired, the default event; also `"L1 Hits"`, `"LL Hits"`, `"RAM Hits"`, `"Estimated Cycles"`, etc. when `--cache-sim=yes`). The most stable / machine-independent signal is `"Ir"`, which is what the `iai` gate tracks.
+`callgrind_run` has two relevant metric locations:
+- `total.summary.<EventKind>.metrics` — the aggregated headline number across all segments (threads/subprocesses/parts). This is the value the `iai` gate tracks.
+- `segments[].events.<EventKind>.metrics` — per-segment breakdown; `scripts/iai_to_benchmark_action.py` falls back to `segments[0]` only if `total` is absent.
+
+`total.summary` and `segments[].events` are `MetricsSummary_for_EventKind` — a map keyed by `EventKind` string (`"Ir"` = instructions retired, the default event; also `"L1hits"`, `"LLhits"`, `"RamHits"`, `"EstimatedCycles"`, etc.). The most stable / machine-independent signal is `"Ir"`, which is what the `iai` gate tracks.
 
 `metrics` is an `EitherOrBoth_for_uint64`:
 - `{"Left": n}` — new-only (first run, no prior baseline on disk)
