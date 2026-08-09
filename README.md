@@ -69,7 +69,7 @@ Then `cd ../smartcore && git checkout development && cd -` and run `cargo bench 
 
 ## CI
 
-`.github/workflows/bench.yml` runs on `repository_dispatch` from smartcore (`event_type: smartcore-dev-push`) and manual `workflow_dispatch`. It does **not** self-trigger on pushes to this repo's `main` — bench history reflects the benchmarked library, not harness edits.
+`.github/workflows/bench.yml` runs on `repository_dispatch` from smartcore (`event_type: smartcore-dev-push`), on push to this repo's `main` (so harness edits re-record a baseline against the same published smartcore), on a nightly cron, and on manual `workflow_dispatch`.
 
 ### Dispatch contract
 

@@ -1,19 +1,24 @@
 name: bench
 
 # Triggered by:
+#   - push to this repo's `main` (harness edits land → re-bench the latest
+#     published smartcore so the recorded history reflects both halves).
 #   - repository_dispatch from smartcore (event_type: smartcore-dev-push),
 #     fired when a commit lands on smartcore's `development` branch.
 #   - nightly schedule, so a baseline against the latest published smartcore
-#     on crates.io is recorded even when smartcore has no recent pushes.
+#     on crates.io is recorded even when neither repo has recent pushes.
 #   - workflow_dispatch (manual rerun).
 #
-# NOTE: this workflow does NOT self-trigger on pushes to smartcore-benches'
-# own `main` branch. The persisted history reflects the benchmarked library
-# version (smartcore from crates.io latest 0.6.x), not harness edits.
-# Harness changes are validated by the `harness-check` job in lint.yml.
+# The persisted history tracks the benchmarked library version (smartcore
+# from crates.io latest 0.6.x). Harness changes are validated by the
+# `harness-check` job in lint.yml; this workflow re-records the baseline
+# after such edits so a harness change and a library change are
+# distinguishable in the trend charts.
 #
 # smartcore is resolved from crates.io (latest 0.6.x) — see Cargo.toml.
 on:
+  push:
+    branches: [main]
   repository_dispatch:
     types: [smartcore-dev-push]
   schedule:
@@ -23,7 +28,7 @@ on:
 
 # Cancel superseded runs to conserve runner minutes.
 concurrency:
-  group: bench-${{ github.event.client_payload.sha || github.run_id }}
+  group: bench-${{ github.event_name }}-${{ github.event.client_payload.sha || github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
