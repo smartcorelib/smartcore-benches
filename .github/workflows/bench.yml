@@ -190,31 +190,64 @@ jobs:
           key: bench-iai-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: bench-iai-
 
+      # iai-callgrind 0.14 splits the runtime into a separate
+      # `iai-callgrind-runner` binary that `cargo bench` does NOT install.
+      # Without it the bench binary fails with "No such file or directory
+      # (os error 2)" and produces no JSON, which then surfaces as a
+      # misleading "Unexpected end of JSON input" parse error in the
+      # benchmark-action step below. Install the runner at the version
+      # Cargo.lock pins (must match the `iai-callgrind` lib dep). The
+      # `if ! command -v` guard skips the ~1m install when the cache
+      # already restored `~/.cargo/bin/iai-callgrind-runner`.
+      - name: Install iai-callgrind-runner
+        run: |
+          if command -v iai-callgrind-runner >/dev/null 2>&1; then
+            echo "::notice::iai-callgrind-runner already on PATH; skipping install"
+            exit 0
+          fi
+          ver=$(grep -A1 '^name = "iai-callgrind-runner"$' Cargo.lock | grep version | sed -E 's/version = "([^"]+)".*/\1/')
+          if [ -z "$ver" ]; then
+            echo "::error::could not resolve iai-callgrind-runner version from Cargo.lock" >&2
+            exit 1
+          fi
+          echo "::notice::Installing iai-callgrind-runner v$ver"
+          cargo install iai-callgrind-runner --version "$ver" --locked
+
       - name: Build iai benches (no-run)
         run: cargo bench --no-run --bench iai_matmul --bench iai_ab --bench iai_svd --bench iai_cover_tree --bench iai_iterator_mut
 
-      # Run each iai bench. iai-callgrind emits JSON to its own output dir;
-      # we collect each into bench-output/ for benchmark-action.
+      # Run each iai bench. iai-callgrind's `--output-format=json` emits one
+      # BenchmarkSummary object per benchmark line on stdout (NDJSON); we
+      # append every bench crate's output into one iai.ndjson so the adapter
+      # below sees the whole suite as a single stream.
       - name: Run iai-callgrind benchmarks
         run: |
           mkdir -p bench-output
+          : > bench-output/iai.ndjson
           for b in iai_matmul iai_ab iai_svd iai_cover_tree iai_iterator_mut; do
             echo "::group::running $b"
-            cargo bench --bench "$b" -- --output-format=json | tee "bench-output/${b}.json"
+            cargo bench --bench "$b" -- --output-format=json >> bench-output/iai.ndjson
             echo "::endgroup::"
           done
+
+      # Convert the NDJSON (one BenchmarkSummary per line) into the JSON
+      # array benchmark-action's `customSmallerIsBetter` tool expects:
+      # [{"name","unit":"Instructions","value"}] projecting the Ir (instructions
+      # retired) `Left`/`Both[0]` metric. The adapter is stdlib-only Python.
+      - name: Convert iai NDJSON to benchmark-action array
+        run: python3 scripts/iai_to_benchmark_action.py bench-output/iai.ndjson bench-output/iai.json
 
       # iai-callgrind emits instruction counts (smaller = better), which
       # benchmark-action's `customSmallerIsBetter` tool shape accepts. The
       # action's v1 API does not have a dedicated `iai-callgrind` tool key,
       # so we map the JSON through the custom-smaller path. Instruction
-      # counts are deterministic → a tight threshold is safe, and a >2%
+      # counts are deterministic → a tight threshold is safe, and a >20%
       # regression fails the job (and the status check posted below).
       - name: Store + chart iai benchmark history
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: customSmallerIsBetter
-          output-file-path: bench-output/iai_matmul.json
+          output-file-path: bench-output/iai.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
           gh-pages-branch: gh-pages
@@ -228,7 +261,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: iai-json
-          path: bench-output/iai_*.json
+          path: |
+            bench-output/iai.ndjson
+            bench-output/iai.json
+            bench-output/iai_*.json
 
       # Post a pass/fail status check back to the smartcore commit. Runs on
       # both success and failure so branch protection sees the real outcome.
