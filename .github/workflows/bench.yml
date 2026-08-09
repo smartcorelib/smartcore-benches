@@ -190,6 +190,13 @@ jobs:
           key: bench-iai-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: bench-iai-
 
+      # Compile first so Cargo.lock exists (it's gitignored — not committed),
+      # and a compile failure fails the job without spending runner minutes
+      # on installing the runner or running Valgrind. The runner binary is
+      # only needed at run time, not to build the bench crate.
+      - name: Build iai benches (no-run)
+        run: cargo bench --no-run --bench iai_matmul --bench iai_ab --bench iai_svd --bench iai_cover_tree --bench iai_iterator_mut
+
       # iai-callgrind 0.14 splits the runtime into a separate
       # `iai-callgrind-runner` binary that `cargo bench` does NOT install.
       # Without it the bench binary fails with "No such file or directory
@@ -212,9 +219,6 @@ jobs:
           fi
           echo "::notice::Installing iai-callgrind-runner v$ver"
           cargo install iai-callgrind-runner --version "$ver" --locked
-
-      - name: Build iai benches (no-run)
-        run: cargo bench --no-run --bench iai_matmul --bench iai_ab --bench iai_svd --bench iai_cover_tree --bench iai_iterator_mut
 
       # Run each iai bench. iai-callgrind's `--output-format=json` emits one
       # BenchmarkSummary object per benchmark line on stdout (NDJSON); we
