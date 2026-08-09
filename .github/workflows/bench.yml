@@ -1,0 +1,180 @@
+name: bench
+
+# Triggered by:
+#   - repository_dispatch from smartcore (event_type: smartcore-dev-push),
+#     fired when a commit lands on smartcore's `development` branch.
+#   - workflow_dispatch (manual rerun).
+#
+# NOTE: this workflow does NOT self-trigger on pushes to smartcore-benches'
+# own `main` branch. Bench runs are tied to smartcore development commits so
+# the persisted history reflects the benchmarked library, not harness edits.
+# Harness changes are validated by the `harness-check` job in lint.yml.
+#
+# smartcore is resolved from crates.io (latest 0.6.x) — see Cargo.toml.
+on:
+  repository_dispatch:
+    types: [smartcore-dev-push]
+  workflow_dispatch:
+
+# Cancel superseded runs to conserve runner minutes.
+concurrency:
+  group: bench-${{ github.event.client_payload.sha || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  criterion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolay/rust-toolchain@stable
+
+      - name: Cache .cargo and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            ./target
+          key: bench-criterion-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: bench-criterion-
+
+      # Compile first so a compile failure fails the job without spending
+      # runner minutes on actually running benches.
+      - name: Build benches (no-run)
+        run: cargo bench --no-run
+
+      # Run criterion benches. `--output-format bencher` emits one line per
+      # bench in the format benchmark-action/github-action-benchmark expects
+      # for tool=cargo.
+      - name: Run criterion benchmarks
+        run: |
+          mkdir -p bench-output
+          cargo bench -- --output-format bencher | tee bench-output/criterion.json
+
+      # Persist the results to the gh-pages branch and generate the trend
+      # page. auto-push: true lets the action commit the JSON directly.
+      - name: Store + chart benchmark history
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: cargo
+          output-file-path: bench-output/criterion.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          gh-pages-branch: gh-pages
+          benchmark-data-dir-path: dev
+          comment-on-alert: true
+          # Criterion wall-clock numbers are noisy on GitHub-hosted runners
+          # (20-60% variance is normal), so this job is advisory, not a gate.
+          fail-on-alert: false
+          alert-threshold: "200%"
+
+      - name: Upload criterion.json artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: criterion-json
+          path: bench-output/criterion.json
+
+      # Post a status check back to the smartcore commit that triggered the
+      # run, so that repo's branch protection can see a benches result.
+      - name: Post status check back to smartcore
+        if: github.event_name == 'repository_dispatch'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.BENCHES_STATUS_PAT }}
+          script: |
+            const sha = context.payload.client_payload.sha;
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.repos.createCommitStatus({
+              owner: 'smartcorelib',
+              repo: 'smartcore',
+              sha,
+              state: 'success',
+              context: 'smartcore-benches / criterion',
+              description: 'Criterion bench run completed (advisory)',
+              target_url: runUrl,
+            });
+
+  # Deterministic instruction-count gate. Linux-only (Valgrind). Counts retired
+  # instructions, which are machine-independent, so a tight alert threshold is
+  # safe even on GitHub-hosted runners. This is the job that can fail a merge.
+  iai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolay/rust-toolchain@stable
+
+      - name: Install Valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
+
+      - name: Cache .cargo and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            ./target
+          key: bench-iai-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: bench-iai-
+
+      - name: Build iai benches (no-run)
+        run: cargo bench --no-run --bench iai_matmul --bench iai_ab --bench iai_svd --bench iai_cover_tree --bench iai_iterator_mut
+
+      # Run each iai bench. iai-callgrind emits JSON to its own output dir;
+      # we collect each into bench-output/ for benchmark-action.
+      - name: Run iai-callgrind benchmarks
+        run: |
+          mkdir -p bench-output
+          for b in iai_matmul iai_ab iai_svd iai_cover_tree iai_iterator_mut; do
+            echo "::group::running $b"
+            cargo bench --bench "$b" -- --output-format=json | tee "bench-output/${b}.json"
+            echo "::endgroup::"
+          done
+
+      # iai instruction counts are deterministic → a tight threshold is safe.
+      # A >2% regression fails the job (and the status check posted below).
+      - name: Store + chart iai benchmark history
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: iai-callgrind
+          output-file-path: bench-output/iai_matmul.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          gh-pages-branch: gh-pages
+          benchmark-data-dir-path: iai-dev
+          comment-on-alert: true
+          fail-on-alert: true
+          alert-threshold: "120%"
+
+      - name: Upload iai JSON artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iai-json
+          path: bench-output/iai_*.json
+
+      # Post a pass/fail status check back to the smartcore commit. Runs on
+      # both success and failure so branch protection sees the real outcome.
+      - name: Post status check back to smartcore
+        if: always() && github.event_name == 'repository_dispatch'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.BENCHES_STATUS_PAT }}
+          script: |
+            const sha = context.payload.client_payload.sha;
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const job = context.job;
+            const state = job === 'success' ? 'success' : 'failure';
+            const desc = job === 'success'
+              ? 'iai-callgrind instruction counts within threshold'
+              : 'iai-callgrind regression detected (>2% on an instruction count)';
+            await github.rest.repos.createCommitStatus({
+              owner: 'smartcorelib',
+              repo: 'smartcore',
+              sha,
+              state,
+              context: 'smartcore-benches / iai-callgrind',
+              description: desc,
+              target_url: runUrl,
+            });

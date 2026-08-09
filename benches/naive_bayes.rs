@@ -1,5 +1,5 @@
 use criterion::BenchmarkId;
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 
 use ndarray::Array2;
 use smartcore::linalg::basic::arrays::Array2 as BaseArray2;
@@ -13,7 +13,7 @@ pub fn gaussian_naive_bayes_fit_benchmark(c: &mut Criterion) {
         for n_features in [10_usize, 100_usize, 1000_usize].iter() {
             let x = DenseMatrix::<f64>::rand(*n_samples, *n_features);
             let y: Vec<usize> = (0..*n_samples)
-                .map(|i| (i % *n_samples / 5_usize) as usize)
+                .map(|i| i % *n_samples / 5_usize)
                 .collect::<Vec<usize>>();
             group.bench_with_input(
                 BenchmarkId::from_parameter(format!(

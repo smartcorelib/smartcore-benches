@@ -1,39 +1,33 @@
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
-use itertools::Itertools;
-
-// to run this bench you have to change the declaraion in mod.rs ---> pub mod fastpair;
-use smartcore::algorithm::neighbour::fastpair::FastPair;
-use smartcore::linalg::basic::arrays::{Array, Array2};
-use smartcore::linalg::basic::matrix::DenseMatrix;
-use smartcore::metrics::distance::PairwiseDistance;
 use std::time::Duration;
+
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
+use itertools::Itertools;
+use smartcore::algorithm::neighbour::fastpair::FastPair;
+use smartcore::linalg::basic::arrays::Array;
+use smartcore::metrics::distance::PairwiseDistance;
+
+// to run this bench you have to change the declaration in mod.rs ---> pub mod fastpair;
+use smartcore::linalg::basic::arrays::Array2 as BaseArray2;
+use smartcore::linalg::basic::matrix::DenseMatrix;
 
 /// Utilities substitutes for benches
 ///
-
-///
-/// return sum of squared distancs
-///
+/// return sum of squared distances
 fn squared_distance(x: Vec<f64>, y: Vec<f64>) -> f64 {
     if x.len() != y.len() {
         panic!("Input vector sizes are different.");
     }
 
-    let sum: f64 = x
-        .iter()
+    x.iter()
         .zip(y.iter())
         .map(|(&a, &b)| {
             let r = a - b;
             r * r
         })
-        .sum();
-
-    sum
+        .sum()
 }
 
-///
 /// Brute force algorithm, used only for comparison and testing
-///
 pub fn closest_pair_brute(samples: &DenseMatrix<f64>, n_samples: usize) -> PairwiseDistance<f64> {
     let mut closest_pair = PairwiseDistance {
         node: 0,
@@ -62,7 +56,7 @@ pub fn closest_pair_brute(samples: &DenseMatrix<f64>, n_samples: usize) -> Pairw
     closest_pair
 }
 
-fn closest_pair_bench(n: usize, m: usize) -> () {
+fn closest_pair_bench(n: usize, m: usize) {
     let x = DenseMatrix::<f64>::rand(n, m);
     let fastpair = FastPair::new(&x);
     let result = fastpair.unwrap();
@@ -70,7 +64,7 @@ fn closest_pair_bench(n: usize, m: usize) -> () {
     result.closest_pair();
 }
 
-fn closest_pair_brute_bench(n: usize, m: usize) -> () {
+fn closest_pair_brute_bench(n: usize, m: usize) {
     let x = DenseMatrix::<f64>::rand(n, m);
     closest_pair_brute(&x, x.shape().0);
 }

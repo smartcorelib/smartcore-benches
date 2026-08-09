@@ -4,41 +4,39 @@ description = "Benches for smartcore"
 homepage = "https://smartcorelib.org"
 version = "0.1.0"
 authors = ["SmartCore Developers"]
-edition = "2021"
+edition = "2024"
+rust-version = "1.85"
 license = "Apache-2.0"
 documentation = "https://docs.rs/smartcore"
-repository = "https://github.com/smartcorelib/smartcore"
+repository = "https://github.com/smartcorelib/smartcore-benches"
 readme = "README.md"
 keywords = ["machine-learning", "statistical", "ai", "optimization", "linear-algebra"]
 categories = ["science"]
 
 [dependencies]
-smartcore = { path="../smartcore", features = ["ndarray-bindings", "datasets"] }
-# smartcore = { version = "0.3", features = ["ndarray-bindings"] }
-itertools = { version = "0.10.3"}
-ndarray = "0.15"
-criterion = { version = "0.4", default-features = false }
-serde_json = "1.0"
-bincode = "1.3.1"
-rand = { version = "0.8.5", default-features = false, features = ["small_rng"] }
-rand_distr = { version = "0.4", optional = true }
-serde = { version = "1", features = ["derive"], optional = true }
+# CI resolves smartcore from crates.io (`version = "0.6"` pulls the latest
+# 0.6.x release — currently 0.6.2, edition 2024, ndarray 0.17, rand 0.10).
+#
+# For local dev against a sibling smartcore checkout, temporarily swap this
+# line for: smartcore = { path = "../smartcore", features = ["ndarray-bindings"] }
+smartcore = { version = "0.6", features = ["ndarray-bindings"] }
+# Dependency versions mirror smartcore's Cargo.toml so cargo unifies a single
+# version of each across the graph (avoids two `ndarray`/`rand` copies).
+itertools = "0.15.0"
+ndarray = "0.17"
+rand = { version = "0.10.1", default-features = false, features = ["alloc"] }
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-typetag = { version = "0.2", optional = true }
+# Bench harness. criterion = advisory wall-clock + statistics (local + CI).
+# iai-callgrind = deterministic instruction-count gate (Linux/Valgrind only).
+[dependencies.criterion]
+version = "0.5"
+default-features = false
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.2.8", features = ["js"] }
-
-[target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi")))'.dev-dependencies]
-wasm-bindgen-test = "0.3"
+[target.'cfg(target_os = "linux")'.dev-dependencies]
+iai-callgrind = "0.14"
 
 [[bench]]
 name = "distance"
-harness = false
-
-[[bench]]
-name = "naive_bayes"
 harness = false
 
 [[bench]]
@@ -50,5 +48,53 @@ name = "linear"
 harness = false
 
 [[bench]]
+name = "naive_bayes"
+harness = false
+
+[[bench]]
 name = "svc"
+harness = false
+
+[[bench]]
+name = "matmul"
+harness = false
+
+[[bench]]
+name = "ab"
+harness = false
+
+[[bench]]
+name = "svd"
+harness = false
+
+[[bench]]
+name = "cover_tree"
+harness = false
+
+[[bench]]
+name = "iterator_mut"
+harness = false
+
+# iai-callgrind benches: Linux-only (Valgrind). The `#[cfg(not(target_os =
+# "linux"))]` fallback `fn main()` stub lets them compile on every platform
+# so `cargo bench --no-run` stays a portable gate, but the actual Valgrind
+# run happens only in the iai CI job (see .github/workflows/bench.yml).
+[[bench]]
+name = "iai_matmul"
+harness = false
+
+[[bench]]
+name = "iai_ab"
+harness = false
+
+[[bench]]
+name = "iai_svd"
+harness = false
+
+[[bench]]
+name = "iai_cover_tree"
+harness = false
+
+[[bench]]
+name = "iai_iterator_mut"
 harness = false

@@ -1,0 +1,46 @@
+name: lint
+
+# Validates harness edits on PRs and pushes to this repo's own `main`.
+# Does NOT run benches — those are tied to smartcore development commits
+# via the dispatch contract in bench.yml.
+#
+# smartcore is resolved from crates.io (latest 0.6.x) — see Cargo.toml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  harness-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache .cargo and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            ./target
+          key: lint-cargo-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: lint-cargo-
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install Valgrind (iai-callgrind compile check)
+        run: sudo apt-get update && sudo apt-get install -y valgrind
+
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        run: cargo clippy --all-targets -- -Dwarnings
+
+      # Compile every bench, including the Linux iai_* stubs. A compile
+      # failure here blocks the PR before it can reach bench.yml.
+      - name: cargo bench --no-run
+        run: cargo bench --no-run

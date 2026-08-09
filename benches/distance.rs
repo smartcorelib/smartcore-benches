@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate criterion;
 
-use criterion::black_box;
 use criterion::Criterion;
+use criterion::black_box;
 use smartcore::metrics::distance::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
