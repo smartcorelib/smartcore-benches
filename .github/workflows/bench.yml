@@ -85,6 +85,68 @@ jobs:
           name: criterion-json
           path: bench-output/criterion.json
 
+      # Resolve the exact smartcore version cargo picked from crates.io
+      # (read from the Cargo.lock the build step generated). Used as the
+      # per-version storage directory name below.
+      - name: Resolve smartcore version
+        id: smver
+        run: |
+          ver=$(grep -A1 '^name = "smartcore"$' Cargo.lock | grep version | sed -E 's/version = "([^"]+)".*/\1/')
+          if [ -z "$ver" ]; then
+            echo "::error::could not resolve smartcore version from Cargo.lock" >&2
+            exit 1
+          fi
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+          echo "::notice::Resolved smartcore v$ver"
+
+      # Persist this run's criterion.json under benches-results/v<version>/.
+      # Idempotent: if that version's results are already in the repo, skip.
+      # continue-on-error so a storage hiccup (non-ff push, race with a
+      # concurrent run) does not fail the job or block the status check below.
+      - name: Store criterion results to benches-results/v<smartcore>/
+        id: store
+        continue-on-error: true
+        env:
+          SMARTCORE_VER: ${{ steps.smver.outputs.version }}
+        run: |
+          set -e
+          dir="benches-results/v${SMARTCORE_VER}"
+          # checkout@v4 leaves us detached at the trigger SHA; re-sync to
+          # origin/main so a concurrent run's storage commit is visible and
+          # our idempotent guard sees it.
+          git fetch origin main
+          git checkout -B main origin/main
+          if [ -f "$dir/criterion.json" ]; then
+            echo "::notice::criterion results for v${SMARTCORE_VER} already stored — skipping"
+            exit 0
+          fi
+          mkdir -p "$dir"
+          cp bench-output/criterion.json "$dir/criterion.json"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$dir/criterion.json"
+          git commit -m "bench(criterion): record v${SMARTCORE_VER} results [skip ci]"
+          # Retry once on non-ff rejection (concurrent run pushed between
+          # our fetch and push); re-sync + re-check idempotency first.
+          for attempt in 1 2; do
+            if git push origin main; then
+              echo "::notice::Stored criterion results to $dir/"
+              exit 0
+            fi
+            echo "push attempt $attempt failed; re-syncing..."
+            git fetch origin main
+            git checkout -B main origin/main
+            if [ -f "$dir/criterion.json" ]; then
+              echo "::notice::criterion results for v${SMARTCORE_VER} were stored by a concurrent run — skipping"
+              exit 0
+            fi
+            cp bench-output/criterion.json "$dir/criterion.json"
+            git add "$dir/criterion.json"
+            git commit -m "bench(criterion): record v${SMARTCORE_VER} results [skip ci]"
+          done
+          echo "::warning::Failed to push criterion storage after 2 attempts; next run will retry" >&2
+          exit 1
+
       # Post a status check back to the smartcore commit that triggered the
       # run, so that repo's branch protection can see a benches result.
       - name: Post status check back to smartcore
@@ -142,12 +204,16 @@ jobs:
             echo "::endgroup::"
           done
 
-      # iai instruction counts are deterministic → a tight threshold is safe.
-      # A >2% regression fails the job (and the status check posted below).
+      # iai-callgrind emits instruction counts (smaller = better), which
+      # benchmark-action's `customSmallerIsBetter` tool shape accepts. The
+      # action's v1 API does not have a dedicated `iai-callgrind` tool key,
+      # so we map the JSON through the custom-smaller path. Instruction
+      # counts are deterministic → a tight threshold is safe, and a >2%
+      # regression fails the job (and the status check posted below).
       - name: Store + chart iai benchmark history
         uses: benchmark-action/github-action-benchmark@v1
         with:
-          tool: iai-callgrind
+          tool: customSmallerIsBetter
           output-file-path: bench-output/iai_matmul.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true

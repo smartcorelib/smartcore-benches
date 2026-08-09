@@ -17,3 +17,8 @@ smartcore.code-workspace
 
 # OS
 .DS_Store
+
+# Working bench output produced by CI runs (criterion.json, iai_*.json).
+# Per-version results are persisted under benches-results/v*/ by the
+# storage step in .github/workflows/bench.yml.
+bench-output/
