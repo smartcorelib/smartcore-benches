@@ -2,8 +2,8 @@
 extern crate criterion;
 
 use criterion::Criterion;
-use criterion::black_box;
 use smartcore::metrics::distance::*;
+use std::hint::black_box;
 
 fn criterion_benchmark(c: &mut Criterion) {
     let a = vec![1., 2., 3.];

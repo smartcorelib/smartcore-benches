@@ -1,6 +1,7 @@
-use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use smartcore::linalg::basic::arrays::Array2;
 use smartcore::linalg::basic::matrix::DenseMatrix;
+use std::hint::black_box;
 
 /// Benchmarks `Array2::matmul` directly, isolating the hot path at
 /// `src/linalg/basic/arrays.rs:1117`. Sizes span the {64, 256, 1024}² grid

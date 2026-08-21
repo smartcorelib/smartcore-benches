@@ -1,8 +1,9 @@
-use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use ndarray::Array2 as NdArray2;
 use smartcore::linalg::basic::arrays::Array2;
 use smartcore::linalg::basic::matrix::DenseMatrix;
 use smartcore::linalg::traits::svd::SVDDecomposable;
+use std::hint::black_box;
 
 /// Benchmarks `SVDDecomposable::svd` isolating the hot path at
 /// `src/linalg/traits/svd.rs:71`. Two shapes (square and tall) are exercised

@@ -1,8 +1,9 @@
-use criterion::{BatchSize, BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
 use smartcore::algorithm::neighbour::cover_tree::CoverTree;
 use smartcore::algorithm::neighbour::linear_search::LinearKNNSearch;
 use smartcore::metrics::distance::euclidian::Euclidian;
 use smartcore::numbers::realnum::RealNumber;
+use std::hint::black_box;
 
 /// Generates `n_samples` points of `n_features` dimensions using
 /// `RealNumber::rand()`, which is seed-0 deterministic when smartcore is

@@ -64,6 +64,12 @@ jobs:
       # alphabetically `iai_ab` — so every bench sorted after it (iterator_mut,
       # linear, matmul, naive_bayes, svc, svd) never runs. pipefail makes a
       # bench failure fail the step instead of hiding behind tee's exit code.
+      #
+      # The timing caps keep the whole suite inside ~15 min on shared runners:
+      # criterion 0.8 dropped Criterion.toml support, so the budget is set via
+      # CLI (3 s warm-up + 5 s measurement defaults cost ~65 s per case; at
+      # 0.5 s + 2 s a case costs ~13-20 s). sample-size 20 bounds slow cases
+      # (one sample per iteration floor), e.g. svc fits measured in seconds.
       - name: Run criterion benchmarks
         run: |
           set -o pipefail
@@ -71,7 +77,8 @@ jobs:
           cargo bench \
             --bench distance --bench fastpair --bench linear --bench naive_bayes --bench svc \
             --bench matmul --bench ab --bench svd --bench cover_tree --bench iterator_mut \
-            -- --output-format bencher | tee bench-output/criterion.json
+            -- --output-format bencher --warm-up-time 0.5 --measurement-time 2 --sample-size 20 \
+            | tee bench-output/criterion.json
 
       # Persist the results to the gh-pages branch and generate the trend
       # page. auto-push: true lets the action commit the JSON directly.

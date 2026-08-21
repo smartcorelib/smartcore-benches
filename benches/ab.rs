@@ -1,6 +1,7 @@
-use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use smartcore::linalg::basic::arrays::Array2;
 use smartcore::linalg::basic::matrix::DenseMatrix;
+use std::hint::black_box;
 
 /// Benchmarks `Array2::ab` — the reachable matmul-with-transpose hot path
 /// (smartcore 0.6.x has no `impl HighOrderOperations for DenseMatrix`, so

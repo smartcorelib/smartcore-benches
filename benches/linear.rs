@@ -1,5 +1,6 @@
 use criterion::BenchmarkId;
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
+use std::hint::black_box;
 
 use smartcore::linalg::basic::arrays::Array2 as BaseArray2;
 use smartcore::linalg::basic::matrix::DenseMatrix;

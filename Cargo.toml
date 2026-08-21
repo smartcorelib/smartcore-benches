@@ -5,7 +5,7 @@ homepage = "https://smartcorelib.org"
 version = "0.1.0"
 authors = ["SmartCore Developers"]
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.86"
 license = "Apache-2.0"
 documentation = "https://docs.rs/smartcore"
 repository = "https://github.com/smartcorelib/smartcore-benches"
@@ -29,7 +29,7 @@ rand = { version = "0.10.1", default-features = false, features = ["alloc"] }
 # Bench harness. criterion = advisory wall-clock + statistics (local + CI).
 # iai-callgrind = deterministic instruction-count gate (Linux/Valgrind only).
 [dependencies.criterion]
-version = "0.5"
+version = "0.8"
 default-features = false
 
 [target.'cfg(target_os = "linux")'.dev-dependencies]
