@@ -57,10 +57,21 @@ jobs:
       # Run criterion benches. `--output-format bencher` emits one line per
       # bench in the format benchmark-action/github-action-benchmark expects
       # for tool=cargo.
+      #
+      # Each bench is passed explicitly: a bare `cargo bench -- ...` would also
+      # execute the iai_* binaries, whose Linux main execs iai-callgrind-runner
+      # (not installed in this job). cargo aborts at the first failure —
+      # alphabetically `iai_ab` — so every bench sorted after it (iterator_mut,
+      # linear, matmul, naive_bayes, svc, svd) never runs. pipefail makes a
+      # bench failure fail the step instead of hiding behind tee's exit code.
       - name: Run criterion benchmarks
         run: |
+          set -o pipefail
           mkdir -p bench-output
-          cargo bench -- --output-format bencher | tee bench-output/criterion.json
+          cargo bench \
+            --bench distance --bench fastpair --bench linear --bench naive_bayes --bench svc \
+            --bench matmul --bench ab --bench svd --bench cover_tree --bench iterator_mut \
+            -- --output-format bencher | tee bench-output/criterion.json
 
       # Persist the results to the gh-pages branch and generate the trend
       # page. auto-push: true lets the action commit the JSON directly.
