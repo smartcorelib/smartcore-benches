@@ -2,6 +2,8 @@
 
 Agent-focused guidance for working on the `smartcore-benches` benchmark harness.
 
+Always use ASD-STE100 Simplified Technical English
+
 ## Project basics
 
 - **What this repo is**: Criterion + iai-callgrind benchmark harness for [smartcore](https://github.com/smartcorelib/smartcore). It is *not* smartcore itself; it pulls a published smartcore release from crates.io (latest `0.6.x`) and measures the hot paths flagged in [smartcore#407](https://github.com/smartcorelib/smartcore/issues/407).

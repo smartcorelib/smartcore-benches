@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "/Users/tuned-silicon/smartcore/**": "allow"
+    }
+  },
+  "references": {
+    "smartcore": {
+      "path": "../smartcore",
+      "description": "The smartcore library source tree, used by the bench dependency (Cargo.toml path = \"../smartcore\"). Consult for current public APIs when writing or fixing benches."
+    }
+  }
+}
