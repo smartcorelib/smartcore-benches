@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787322131110,
+  "lastUpdate": 1787327869372,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -1507,6 +1507,90 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/smartcorelib/smartcore-benches/commit/543598f895910d6dc6bac938486defd3e60cff31"
         },
         "date": 1787322130454,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "iai_matmul::matmul::bench_matmul_64",
+            "value": 15886971,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_matmul::matmul::bench_matmul_256",
+            "value": 807278865,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_false",
+            "value": 790369313,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_true",
+            "value": 1059198507,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_false",
+            "value": 1042421292,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_true",
+            "value": 1042421292,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_svd::svd::bench_svd_square_128",
+            "value": 20270901,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_build_10k_x_10",
+            "value": 66929673,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_find_10k_x_10",
+            "value": 76126330,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_fast_path",
+            "value": 599936426,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_cross_axis",
+            "value": 860315552,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
+            "value": 599936825,
+            "unit": "Instructions"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "distinct": true,
+          "id": "41c23ae4e7f6bed4b25042da0a93242e72df99c6",
+          "message": "build: criterion 0.8.2, MSRV 1.86, bounded bench runtime; bench smartcore 0.6.10\n\n- criterion 0.5 -> 0.8.2 (0.8 needs Rust 1.86; rust-version raised\n  accordingly - CI runs stable, smartcore itself stays MSRV 1.85).\n  Replace deprecated criterion::black_box with std::hint::black_box.\n- Cap wall-clock cost via CLI (criterion 0.8 removed Criterion.toml):\n  --warm-up-time 0.5 --measurement-time 2 --sample-size 20 keeps the\n  full suite inside ~15 min on shared runners instead of hours.\n- Trim MultiClassSVC::fit grid to 100/500/1000 x 10/100: RBF SVM fit\n  scales ~quadratically; CI measured 7.5 s/fit at 1000x100 and the old\n  10000-sample rows needed minutes per fit (run cancelled after >1 h\n  stuck in svc).\n- Lockfile now resolves smartcore 0.6.10 for the next recording run.",
+          "timestamp": "2026-08-21T16:55:03+01:00",
+          "tree_id": "89819297b0ca36d44621d48fc88842e78986f2ff",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/41c23ae4e7f6bed4b25042da0a93242e72df99c6"
+        },
+        "date": 1787327868623,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
