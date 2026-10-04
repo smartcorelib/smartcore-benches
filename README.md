@@ -63,11 +63,11 @@ Then `cd ../smartcore && git checkout development && cd -` and run `cargo bench 
 
 ### Algorithm benches (criterion, legacy)
 
-`distance`, `fastpair`, `linear`, `naive_bayes`, `svc`.
+`distance`, `fastpair`, `linear`, `naive_bayes`, `svc`, `random_forest_regressor`.
 
 ### Deterministic gate (iai-callgrind, Linux-only)
 
-`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. Counts are machine-independent, so a tight `120%` alert threshold is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
+`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor` gates `RandomForestRegressor::fit` + `predict` on fixed, deterministic data. Counts are machine-independent, so a tight `120%` alert threshold is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
 
 ## CI
 

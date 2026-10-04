@@ -75,6 +75,10 @@ harness = false
 name = "iterator_mut"
 harness = false
 
+[[bench]]
+name = "random_forest_regressor"
+harness = false
+
 # iai-callgrind benches: Linux-only (Valgrind). The `#[cfg(not(target_os =
 # "linux"))]` fallback `fn main()` stub lets them compile on every platform
 # so `cargo bench --no-run` stays a portable gate, but the actual Valgrind
@@ -97,4 +101,8 @@ harness = false
 
 [[bench]]
 name = "iai_iterator_mut"
+harness = false
+
+[[bench]]
+name = "iai_random_forest_regressor"
 harness = false
