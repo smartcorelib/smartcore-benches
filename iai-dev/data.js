@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791119395169,
+  "lastUpdate": 1791122718603,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -5505,6 +5505,95 @@ window.BENCHMARK_DATA = {
           {
             "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
             "value": 594691902,
+            "unit": "Instructions"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "tunedconsulting@gmail.com",
+            "name": "Lorenzo",
+            "username": "Mec-iS"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16fbadbdba5fa7e5052596b62c65cd395fb6d109",
+          "message": "Merge pull request #7 from slievens/rf-bench\n\nbench: add RandomForestRegressor benches",
+          "timestamp": "2026-10-04T23:02:34+09:00",
+          "tree_id": "c405b0b2f81e2636bb987f42e0ab8ec27e4d762e",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/16fbadbdba5fa7e5052596b62c65cd395fb6d109"
+        },
+        "date": 1791122717996,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "iai_matmul::matmul::bench_matmul_64",
+            "value": 15862395,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_matmul::matmul::bench_matmul_256",
+            "value": 806885649,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_false",
+            "value": 789976097,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_true",
+            "value": 1058805291,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_false",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_true",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_svd::svd::bench_svd_square_128",
+            "value": 20311361,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_build_10k_x_10",
+            "value": 66599667,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_find_10k_x_10",
+            "value": 75986137,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_fast_path",
+            "value": 594691503,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_cross_axis",
+            "value": 858877451,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
+            "value": 594691902,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_regressor::random_forest_regressor::bench_random_forest_regressor_fit_200x10",
+            "value": 23035721,
             "unit": "Instructions"
           }
         ]
