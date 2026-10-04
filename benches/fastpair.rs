@@ -61,7 +61,7 @@ fn closest_pair_bench(n: usize, m: usize) {
     let fastpair = FastPair::new(&x);
     let result = fastpair.unwrap();
 
-    result.closest_pair();
+    let _ = result.closest_pair();
 }
 
 fn closest_pair_brute_bench(n: usize, m: usize) {
