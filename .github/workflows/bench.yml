@@ -77,7 +77,7 @@ jobs:
           cargo bench \
             --bench distance --bench fastpair --bench linear --bench naive_bayes --bench svc \
             --bench matmul --bench ab --bench svd --bench cover_tree --bench iterator_mut \
-            --bench random_forest_regressor \
+            --bench random_forest_regressor --bench lasso --bench elastic_net \
             -- --output-format bencher --warm-up-time 0.5 --measurement-time 2 --sample-size 20 \
             | tee bench-output/criterion.json
 
@@ -214,7 +214,7 @@ jobs:
       # on installing the runner or running Valgrind. The runner binary is
       # only needed at run time, not to build the bench crate.
       - name: Build iai benches (no-run)
-        run: cargo bench --no-run --bench iai_matmul --bench iai_ab --bench iai_svd --bench iai_cover_tree --bench iai_iterator_mut --bench iai_random_forest_regressor
+        run: cargo bench --no-run --bench iai_matmul --bench iai_ab --bench iai_svd --bench iai_cover_tree --bench iai_iterator_mut --bench iai_random_forest_regressor --bench iai_lasso --bench iai_elastic_net
 
       # iai-callgrind 0.14 splits the runtime into a separate
       # `iai-callgrind-runner` binary that `cargo bench` does NOT install.
@@ -247,7 +247,7 @@ jobs:
         run: |
           mkdir -p bench-output
           : > bench-output/iai.ndjson
-          for b in iai_matmul iai_ab iai_svd iai_cover_tree iai_iterator_mut iai_random_forest_regressor; do
+          for b in iai_matmul iai_ab iai_svd iai_cover_tree iai_iterator_mut iai_random_forest_regressor iai_lasso iai_elastic_net; do
             echo "::group::running $b"
             cargo bench --bench "$b" -- --output-format=json >> bench-output/iai.ndjson
             echo "::endgroup::"

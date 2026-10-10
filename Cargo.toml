@@ -106,3 +106,19 @@ harness = false
 [[bench]]
 name = "iai_random_forest_regressor"
 harness = false
+
+[[bench]]
+name = "lasso"
+harness = false
+
+[[bench]]
+name = "elastic_net"
+harness = false
+
+[[bench]]
+name = "iai_lasso"
+harness = false
+
+[[bench]]
+name = "iai_elastic_net"
+harness = false
