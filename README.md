@@ -61,13 +61,72 @@ Then `cd ../smartcore && git checkout development && cd -` and run `cargo bench 
 | `cover_tree` | `CoverTree::new`/`find` (`cover_tree.rs:37`) vs `LinearKNNSearch` | 1k/10k/100k × 10/100 |
 | `iterator_mut` | `DenseMatrix::iterator_mut` (`matrix.rs:545`) + `MutView::iterator_mut` (`matrix.rs:254`) — the #368 refactor surface | 1024², 4096² |
 
+### Lasso and Elastic Net
+
+`lasso` and `elastic_net` measure `fit` with `f64` data. Each bench uses
+1,024, 8,192, and 65,536 rows with 32 columns, plus 1,024 rows with 128 columns.
+Each size runs with row-major and column-major `DenseMatrix` inputs and a
+row-major `ndarray` input. All inputs contain the same values for a given size.
+The data have nonzero column means, different column scales, eight active
+coefficients, and small noise. A fixed integer hash makes each input repeatable.
+Data creation occurs outside the timed loop. The loop includes model destruction.
+
+Both estimators use `alpha = 0.1`, normalization, `tol = 1e-4`, and
+`max_iter = 1000`. Elastic Net uses `l1_ratio = 0.5`. These cases measure complete
+fits, including solver work. They do not isolate the cost of normalization.
+
+```bash
+cargo bench --bench lasso --bench elastic_net
+```
+
+To compare eager and lazy normalization for smartcore PR #480, use the same
+local smartcore checkout for both builds. Temporarily replace the `smartcore`
+dependency in `Cargo.toml` with this line. Adjust the path if needed. The checkout
+must provide the `lazy-normalization` feature.
+
+```toml
+smartcore = { path = "../smartcore", features = ["ndarray-bindings"] }
+```
+
+```bash
+cargo bench --bench lasso --bench elastic_net -- --save-baseline eager
+cargo bench --features smartcore/lazy-normalization \
+  --bench lasso --bench elastic_net -- --baseline eager
+```
+
+Both commands must use the same `target` directory so Criterion can find the
+saved baseline. To compare two commits instead, run the first command at the
+base commit, change the smartcore checkout to the candidate commit, and run the
+second command with the applicable features. Restore the crates.io dependency
+after the comparison. The normal CI jobs measure the published smartcore release.
+
+Criterion does not measure peak memory. The `regularized_fit` example creates
+one dense input and fits one model in each process. With the local dependency
+still in place, build first, then measure the binary directly with GNU `time`
+on Linux:
+
+```bash
+cargo build --release --example regularized_fit
+/usr/bin/time -v target/release/examples/regularized_fit lasso 65536 32 row
+/usr/bin/time -v target/release/examples/regularized_fit elastic_net 65536 32 row
+cargo build --release --example regularized_fit --features smartcore/lazy-normalization
+/usr/bin/time -v target/release/examples/regularized_fit lasso 65536 32 row
+/usr/bin/time -v target/release/examples/regularized_fit elastic_net 65536 32 row
+```
+
+Use `column` instead of `row` to measure a column-major input. The maximum
+resident set size includes input creation, the model, and process overhead.
+It is not an allocation count or the memory used by the fit alone. Use Criterion
+for fit times. Record the smartcore commit, feature set, CPU, OS, Rust version,
+and build flags with any results. Repeat memory runs in separate processes.
+
 ### Algorithm benches (criterion, legacy)
 
 `distance`, `fastpair`, `linear`, `naive_bayes`, `svc`, `random_forest_regressor`.
 
 ### Deterministic gate (iai-callgrind, Linux-only)
 
-`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor` gates `RandomForestRegressor::fit` + `predict` on fixed, deterministic data. Counts are machine-independent, so a tight `120%` alert threshold is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
+`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor` gates `RandomForestRegressor::fit` + `predict` on fixed, deterministic data. `iai_lasso` and `iai_elastic_net` measure fits with fixed 1,024 × 32 inputs. Each tests both dense layouts with normalization and a row-major input without normalization. Setup runs outside the instruction count. Counts are machine-independent, so a tight `120%` alert threshold is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
 
 ## CI
 
