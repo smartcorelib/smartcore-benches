@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791903497583,
+  "lastUpdate": 1791954862626,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -6377,6 +6377,125 @@ window.BENCHMARK_DATA = {
           {
             "name": "iai_random_forest_regressor::random_forest_regressor::bench_random_forest_regressor_fit_200x10",
             "value": 10325384,
+            "unit": "Instructions"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "13087841+jolars@users.noreply.github.com",
+            "name": "Johan Larsson",
+            "username": "jolars"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4a1e77c6cd1f0e4a4163847ddb0dfe999b98c266",
+          "message": "feat: add lasso and elastic net benchmarks (#9)",
+          "timestamp": "2026-10-14T06:12:10+01:00",
+          "tree_id": "0199418b290e779c30eccaf7020c2e5883d0d37a",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/4a1e77c6cd1f0e4a4163847ddb0dfe999b98c266"
+        },
+        "date": 1791954861880,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "iai_matmul::matmul::bench_matmul_64",
+            "value": 15862395,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_matmul::matmul::bench_matmul_256",
+            "value": 806885649,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_false",
+            "value": 789976097,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_true",
+            "value": 1058805291,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_false",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_true",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_svd::svd::bench_svd_square_128",
+            "value": 20311361,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_build_10k_x_10",
+            "value": 66599667,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_find_10k_x_10",
+            "value": 75986137,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_fast_path",
+            "value": 594691503,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_cross_axis",
+            "value": 858877451,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
+            "value": 594691902,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_regressor::random_forest_regressor::bench_random_forest_regressor_fit_200x10",
+            "value": 10325384,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::row_major",
+            "value": 156622198,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::column_major",
+            "value": 158948857,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::without_normalization",
+            "value": 169064927,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::row_major",
+            "value": 147927920,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::column_major",
+            "value": 147643699,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::without_normalization",
+            "value": 172984231,
             "unit": "Instructions"
           }
         ]
