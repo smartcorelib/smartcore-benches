@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792675384455,
+  "lastUpdate": 1792760500291,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -39241,6 +39241,724 @@ window.BENCHMARK_DATA = {
             "name": "ndarray::Array2::svd/tall/256x64",
             "value": 518410,
             "range": "± 463",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Johan Larsson",
+            "username": "jolars",
+            "email": "13087841+jolars@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "4a1e77c6cd1f0e4a4163847ddb0dfe999b98c266",
+          "message": "feat: add lasso and elastic net benchmarks (#9)",
+          "timestamp": "2026-10-14T05:12:10Z",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/4a1e77c6cd1f0e4a4163847ddb0dfe999b98c266"
+        },
+        "date": 1792760499157,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "Array2::ab/a_t=false,b_t=false/256",
+            "value": 63292244,
+            "range": "± 278910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Array2::ab/a_t=false,b_t=true/256",
+            "value": 70252240,
+            "range": "± 431186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Array2::ab/a_t=true,b_t=false/256",
+            "value": 75427165,
+            "range": "± 532840",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Array2::ab/a_t=true,b_t=true/256",
+            "value": 67333561,
+            "range": "± 173587",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::new/1000x10/build",
+            "value": 145853,
+            "range": "± 1481",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::new/1000x100/build",
+            "value": 489660,
+            "range": "± 13410",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::new/10000x10/build",
+            "value": 1473319,
+            "range": "± 32975",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::new/10000x100/build",
+            "value": 4808478,
+            "range": "± 99023",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::new/100000x10/build",
+            "value": 17264996,
+            "range": "± 196716",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::new/100000x100/build",
+            "value": 52244792,
+            "range": "± 383247",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::find/1000x10/k=10",
+            "value": 81006,
+            "range": "± 131",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::find/1000x100/k=10",
+            "value": 432473,
+            "range": "± 1288",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::find/10000x10/k=10",
+            "value": 812444,
+            "range": "± 2489",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::find/10000x100/k=10",
+            "value": 4385058,
+            "range": "± 403196",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::find/100000x10/k=10",
+            "value": 8240900,
+            "range": "± 96569",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "CoverTree::find/100000x100/k=10",
+            "value": 55476513,
+            "range": "± 232739",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearKNNSearch::find/1000x10/k=10",
+            "value": 68339,
+            "range": "± 300",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearKNNSearch::find/1000x100/k=10",
+            "value": 406925,
+            "range": "± 1806",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearKNNSearch::find/10000x10/k=10",
+            "value": 680486,
+            "range": "± 1750",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearKNNSearch::find/10000x100/k=10",
+            "value": 4063752,
+            "range": "± 11816",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearKNNSearch::find/100000x10/k=10",
+            "value": 6795530,
+            "range": "± 11990",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearKNNSearch::find/100000x100/k=10",
+            "value": 40656658,
+            "range": "± 37638",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Euclidean Distance",
+            "value": 37,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_row_major/1024x32",
+            "value": 13201312,
+            "range": "± 25505",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_column_major/1024x32",
+            "value": 13163409,
+            "range": "± 33326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/ndarray_row_major/1024x32",
+            "value": 13239927,
+            "range": "± 23438",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_row_major/8192x32",
+            "value": 93915320,
+            "range": "± 303597",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_column_major/8192x32",
+            "value": 92892884,
+            "range": "± 117786",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/ndarray_row_major/8192x32",
+            "value": 95620789,
+            "range": "± 428650",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_row_major/65536x32",
+            "value": 683284749,
+            "range": "± 7199469",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_column_major/65536x32",
+            "value": 671993736,
+            "range": "± 6877690",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/ndarray_row_major/65536x32",
+            "value": 719839461,
+            "range": "± 43765298",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_row_major/1024x128",
+            "value": 136809486,
+            "range": "± 206010",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/dense_column_major/1024x128",
+            "value": 136436184,
+            "range": "± 4246439",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ElasticNet::fit/ndarray_row_major/1024x128",
+            "value": 135384266,
+            "range": "± 143997",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/fastpair --- n_samples: 20, n_features: 10",
+            "value": 54885,
+            "range": "± 501",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/brute --- n_samples: 20, n_features: 10",
+            "value": 45869,
+            "range": "± 743",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/fastpair --- n_samples: 20, n_features: 100",
+            "value": 301529,
+            "range": "± 2835",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/brute --- n_samples: 20, n_features: 100",
+            "value": 224297,
+            "range": "± 2152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/fastpair --- n_samples: 20, n_features: 1000",
+            "value": 2784451,
+            "range": "± 56947",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/brute --- n_samples: 20, n_features: 1000",
+            "value": 1999898,
+            "range": "± 16144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/fastpair --- n_samples: 10, n_features: 10",
+            "value": 16225,
+            "range": "± 334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/brute --- n_samples: 10, n_features: 10",
+            "value": 13529,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/fastpair --- n_samples: 10, n_features: 100",
+            "value": 94216,
+            "range": "± 1236",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/brute --- n_samples: 10, n_features: 100",
+            "value": 76539,
+            "range": "± 1038",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/fastpair --- n_samples: 10, n_features: 1000",
+            "value": 883812,
+            "range": "± 4963",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "FastPair/brute --- n_samples: 10, n_features: 1000",
+            "value": 710890,
+            "range": "± 10648",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/row-major,axis=0/1024",
+            "value": 4016996,
+            "range": "± 441755",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/row-major,axis=1/1024",
+            "value": 48892016,
+            "range": "± 997399",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/col-major,axis=0/1024",
+            "value": 42739453,
+            "range": "± 603049",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/col-major,axis=1/1024",
+            "value": 4600464,
+            "range": "± 482396",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/row-major,axis=0/4096",
+            "value": 76744015,
+            "range": "± 1962122",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/row-major,axis=1/4096",
+            "value": 976510113,
+            "range": "± 4922028",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/col-major,axis=0/4096",
+            "value": 960556009,
+            "range": "± 7891160",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::iterator_mut/col-major,axis=1/4096",
+            "value": 72523536,
+            "range": "± 352716",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrixMutView::iterator_mut/axis=0/1024",
+            "value": 5098645,
+            "range": "± 450908",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrixMutView::iterator_mut/axis=1/1024",
+            "value": 47868460,
+            "range": "± 402254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrixMutView::iterator_mut/axis=0/4096",
+            "value": 81274360,
+            "range": "± 434963",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrixMutView::iterator_mut/axis=1/4096",
+            "value": 979593764,
+            "range": "± 6246193",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_row_major/1024x32",
+            "value": 14303330,
+            "range": "± 22787",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_column_major/1024x32",
+            "value": 15107544,
+            "range": "± 17595",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/ndarray_row_major/1024x32",
+            "value": 14285419,
+            "range": "± 16819",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_row_major/8192x32",
+            "value": 102005629,
+            "range": "± 535215",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_column_major/8192x32",
+            "value": 104538720,
+            "range": "± 125845",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/ndarray_row_major/8192x32",
+            "value": 98303513,
+            "range": "± 220655",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_row_major/65536x32",
+            "value": 800398430,
+            "range": "± 19416220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_column_major/65536x32",
+            "value": 789476488,
+            "range": "± 4154867",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/ndarray_row_major/65536x32",
+            "value": 788676308,
+            "range": "± 34234542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_row_major/1024x128",
+            "value": 137413550,
+            "range": "± 450646",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/dense_column_major/1024x128",
+            "value": 132200620,
+            "range": "± 405278",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Lasso::fit/ndarray_row_major/1024x128",
+            "value": 125750579,
+            "range": "± 542804",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearRegression::fit/n_samples: 64, n_features: 16",
+            "value": 37672,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearRegression::fit/n_samples: 256, n_features: 64",
+            "value": 693128,
+            "range": "± 1948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "LinearRegression::fit/n_samples: 1024, n_features: 256",
+            "value": 15815236,
+            "range": "± 115044",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::matmul/64",
+            "value": 1085094,
+            "range": "± 1146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::matmul/256",
+            "value": 63508025,
+            "range": "± 165519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::matmul/1024",
+            "value": 4549137291,
+            "range": "± 16345941",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 100, n_features: 10",
+            "value": 25218,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 100, n_features: 100",
+            "value": 137853,
+            "range": "± 276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 100, n_features: 1000",
+            "value": 1250813,
+            "range": "± 30385",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 1000, n_features: 10",
+            "value": 334040,
+            "range": "± 979",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 1000, n_features: 100",
+            "value": 2063255,
+            "range": "± 6537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 1000, n_features: 1000",
+            "value": 17037517,
+            "range": "± 237062",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 10000, n_features: 10",
+            "value": 6030720,
+            "range": "± 57613",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 10000, n_features: 100",
+            "value": 26283933,
+            "range": "± 1014918",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB::fit/n_samples: 10000, n_features: 1000",
+            "value": 177857427,
+            "range": "± 1433163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB/DenseMatrix",
+            "value": 3247220212,
+            "range": "± 40875499",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "GaussianNB/ndarray",
+            "value": 3095414095,
+            "range": "± 2550457",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 100, n_features: 10, n_trees: 10",
+            "value": 46597,
+            "range": "± 243",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 100, n_features: 10, n_trees: 50",
+            "value": 187888,
+            "range": "± 439",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 100, n_features: 10, n_trees: 100",
+            "value": 365794,
+            "range": "± 1348",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 1000, n_features: 10, n_trees: 10",
+            "value": 400614,
+            "range": "± 1232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 1000, n_features: 10, n_trees: 50",
+            "value": 1546160,
+            "range": "± 9188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 1000, n_features: 10, n_trees: 100",
+            "value": 2941604,
+            "range": "± 4288",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 1000, n_features: 50, n_trees: 10",
+            "value": 1726527,
+            "range": "± 15361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 1000, n_features: 50, n_trees: 50",
+            "value": 6209150,
+            "range": "± 14184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::fit/n_samples: 1000, n_features: 50, n_trees: 100",
+            "value": 11817293,
+            "range": "± 55102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 100, n_features: 10, n_trees: 10",
+            "value": 3278,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 100, n_features: 10, n_trees: 50",
+            "value": 18117,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 100, n_features: 10, n_trees: 100",
+            "value": 36853,
+            "range": "± 465",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 1000, n_features: 10, n_trees: 10",
+            "value": 32500,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 1000, n_features: 10, n_trees: 50",
+            "value": 180903,
+            "range": "± 894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 1000, n_features: 10, n_trees: 100",
+            "value": 368543,
+            "range": "± 459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 1000, n_features: 50, n_trees: 10",
+            "value": 32489,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 1000, n_features: 50, n_trees: 50",
+            "value": 180906,
+            "range": "± 248",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "RandomForestRegressor::predict/n_samples: 1000, n_features: 50, n_trees: 100",
+            "value": 368098,
+            "range": "± 523",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "MultiClassSVC::fit/n_samples: 100, n_features: 10",
+            "value": 20395709,
+            "range": "± 330733",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "MultiClassSVC::fit/n_samples: 100, n_features: 100",
+            "value": 68295509,
+            "range": "± 314742",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "MultiClassSVC::fit/n_samples: 500, n_features: 10",
+            "value": 540663797,
+            "range": "± 9104094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "MultiClassSVC::fit/n_samples: 500, n_features: 100",
+            "value": 1862436655,
+            "range": "± 88999715",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "MultiClassSVC::fit/n_samples: 1000, n_features: 10",
+            "value": 2204387080,
+            "range": "± 45286942",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "MultiClassSVC::fit/n_samples: 1000, n_features: 100",
+            "value": 7922346054,
+            "range": "± 242122855",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::svd/square/128x128",
+            "value": 864634,
+            "range": "± 2144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "DenseMatrix::svd/tall/256x64",
+            "value": 607944,
+            "range": "± 1902",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ndarray::Array2::svd/square/128x128",
+            "value": 849180,
+            "range": "± 1307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "ndarray::Array2::svd/tall/256x64",
+            "value": 508981,
+            "range": "± 604",
             "unit": "ns/iter"
           }
         ]
