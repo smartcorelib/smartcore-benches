@@ -22,3 +22,8 @@ smartcore.code-workspace
 # Per-version results are persisted under benches-results/v*/ by the
 # storage step in .github/workflows/bench.yml.
 bench-output/
+
+# Local [patch.crates-io] override for benching a sibling smartcore
+# checkout. Created by hand locally and by the ref-run steps in
+# .github/workflows/bench.yml when smartcore_ref is set.
+/.cargo/

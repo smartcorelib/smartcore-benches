@@ -116,7 +116,7 @@ summary.callgrind_summary.callgrind_run.total.summary.Ir.metrics
 Invalid value 'iai-callgrind' for 'tool' input. It must be one of cargo,go,benchmarkjs,benchmarkluau,pytest,googlecpp,catch2,julia,jmh,benchmarkdotnet,customBiggerIsBetter,customSmallerIsBetter
 ```
 
-So the `iai` CI job maps iai output through `tool: customSmallerIsBetter`, which expects a JSON **array** of entries shaped `{"name", "unit", "value"}` (optional `range`, `extra`; see the action README §customBiggerIsBetter/customSmallerIsBetter). The NDJSON→array conversion is done by `scripts/iai_to_benchmark_action.py` (run it with `--self-test /tmp/sc-iai-test` to verify; it's stdlib-only). It projects each `BenchmarkSummary`'s `module_path` (or `function_name`) → `name`, `Ir` `Left`/`Both[0]` → `value`, and fixes `unit: "Instructions"`. Instruction counts are deterministic and smaller-is-better, so a tight `120%` alert threshold is safe on GitHub-hosted runners.
+So the `iai` CI job maps iai output through `tool: customSmallerIsBetter`, which expects a JSON **array** of entries shaped `{"name", "unit", "value"}` (optional `range`, `extra`; see the action README §customBiggerIsBetter/customSmallerIsBetter). The NDJSON→array conversion is done by `scripts/iai_to_benchmark_action.py` (run it with `--self-test /tmp/sc-iai-test` to verify; it's stdlib-only). It projects each `BenchmarkSummary`'s `module_path` (or `function_name`) → `name`, `Ir` `Left`/`Both[0]` → `value`, and fixes `unit: "Instructions"`. Instruction counts are deterministic and smaller-is-better, so a tight `104%` alert threshold is safe on GitHub-hosted runners.
 
 ### Failure cascade when the runner is missing (debugging trail)
 
@@ -128,12 +128,12 @@ When the runner isn't on `$PATH`, the failure cascades through three confusing e
 
 ## CI workflow (`.github/workflows/bench.yml`)
 
-Triggers: push to `main`, `repository_dispatch` from smartcore (`event_type: smartcore-dev-push`, carrying the smartcore commit SHA in `client_payload.sha`), a nightly cron (`0 7 * * *`), and manual `workflow_dispatch`.
+Triggers: push to `main`, `repository_dispatch` from smartcore (`event_type: smartcore-dev-push`, carrying the smartcore commit SHA in `client_payload.sha`), a nightly cron (`0 7 * * *`), and manual `workflow_dispatch`. Manual runs accept an optional `smartcore_ref` input (a smartcore branch or SHA); when set, each job checks out smartcore at that ref into `smartcore/` and patches it in via `[patch.crates-io]` (mirroring smartcore's `release-bench.yml`), skips the per-version `benches-results/` storage, and posts its status checks back to the benched SHA.
 
 | Job | Runner | Tool | Role |
 |---|---|---|---|
 | `criterion` | ubuntu-latest | criterion (wall-clock) | Advisory. 200% alert threshold — noisy on shared runners, posts a comment but does not fail the job. |
-| `iai` | ubuntu-latest | iai-callgrind (instruction count) | Deterministic gate. 120% alert threshold, `fail-on-alert: true`. Posts a `success`/`failure` status check back to the smartcore commit. |
+| `iai` | ubuntu-latest | iai-callgrind (instruction count) | Deterministic gate. 104% alert threshold (fails on a >4% Ir regression), `fail-on-alert: true`. Posts a `success`/`failure` status check back to the smartcore commit. |
 
 ### Results persistence
 

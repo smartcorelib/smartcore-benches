@@ -7,7 +7,9 @@ name: bench
 #     fired when a commit lands on smartcore's `development` branch.
 #   - nightly schedule, so a baseline against the latest published smartcore
 #     on crates.io is recorded even when neither repo has recent pushes.
-#   - workflow_dispatch (manual rerun).
+#   - workflow_dispatch (manual rerun). The optional `smartcore_ref` input
+#     benches a smartcore branch/SHA checkout instead of the crates.io
+#     release (see the checkout steps in each job).
 #
 # The persisted history tracks the benchmarked library version (smartcore
 # from crates.io latest 0.6.x). Harness changes are validated by the
@@ -16,6 +18,9 @@ name: bench
 # distinguishable in the trend charts.
 #
 # smartcore is resolved from crates.io (latest 0.6.x) — see Cargo.toml.
+# A run with `smartcore_ref` set patches in that ref via [patch.crates-io];
+# trend history then mixes ref runs with the released baseline, and the
+# per-version benches-results storage is skipped for such runs.
 on:
   push:
     branches: [main]
@@ -25,10 +30,17 @@ on:
     # 07:00 UTC daily
     - cron: "0 7 * * *"
   workflow_dispatch:
+    inputs:
+      smartcore_ref:
+        description: "smartcore ref to bench (branch or SHA). Empty = crates.io latest 0.6.x."
+        required: false
+        type: string
+        default: ""
 
-# Cancel superseded runs to conserve runner minutes.
+# Cancel superseded runs to conserve runner minutes. A ref run is keyed by
+# the ref, so two dispatches for the same smartcore ref do not interleave.
 concurrency:
-  group: bench-${{ github.event_name }}-${{ github.event.client_payload.sha || github.ref || github.run_id }}
+  group: bench-${{ github.event_name }}-${{ github.event.client_payload.sha || inputs.smartcore_ref || github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -36,6 +48,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Optional ref run: bench a smartcore branch/SHA instead of the
+      # crates.io release. Trigger with, e.g.:
+      #   gh workflow run bench.yml -f smartcore_ref=main
+      # actions/checkout requires paths under $GITHUB_WORKSPACE, so the
+      # checkout lands at ./smartcore and a [patch.crates-io] override
+      # repoints the dep to it (config paths resolve relative to the
+      # project root that owns .cargo/config.toml). Same trick as
+      # smartcore's release-bench.yml. The ref's version must satisfy
+      # Cargo.toml's `smartcore = "0.6"` or cargo rejects the patch.
+      - name: Checkout smartcore at ${{ inputs.smartcore_ref }}
+        if: inputs.smartcore_ref != ''
+        uses: actions/checkout@v4
+        with:
+          repository: smartcorelib/smartcore
+          ref: ${{ inputs.smartcore_ref }}
+          path: smartcore
+
+      # The status check below reports this SHA back to the smartcore commit.
+      - name: Resolve smartcore commit SHA
+        id: smartref
+        if: inputs.smartcore_ref != ''
+        run: echo "sha=$(git -C smartcore rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Repoint smartcore dep to the local checkout
+        if: inputs.smartcore_ref != ''
+        run: |
+          mkdir -p .cargo
+          cat > .cargo/config.toml <<'CFG'
+          [patch.crates-io]
+          smartcore = { path = "smartcore" }
+          CFG
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -122,8 +166,11 @@ jobs:
       # Idempotent: if that version's results are already in the repo, skip.
       # continue-on-error so a storage hiccup (non-ff push, race with a
       # concurrent run) does not fail the job or block the status check below.
+      # Ref runs (patched checkout) are skipped: their numbers are not a
+      # released version's snapshot and must not claim the v<version> slot.
       - name: Store criterion results to benches-results/v<smartcore>/
         id: store
+        if: inputs.smartcore_ref == ''
         continue-on-error: true
         env:
           SMARTCORE_VER: ${{ steps.smver.outputs.version }}
@@ -168,13 +215,22 @@ jobs:
 
       # Post a status check back to the smartcore commit that triggered the
       # run, so that repo's branch protection can see a benches result.
+      # repository_dispatch carries the SHA in its payload; a ref run takes
+      # it from the Resolve smartcore commit SHA step. The `||` picks the
+      # payload when the resolve step was skipped (and vice versa).
       - name: Post status check back to smartcore
-        if: github.event_name == 'repository_dispatch'
+        if: github.event_name == 'repository_dispatch' || (github.event_name == 'workflow_dispatch' && inputs.smartcore_ref != '')
         uses: actions/github-script@v7
+        env:
+          SMARTCORE_SHA: ${{ steps.smartref.outputs.sha || github.event.client_payload.sha }}
         with:
           github-token: ${{ secrets.BENCHES_STATUS_PAT }}
           script: |
-            const sha = context.payload.client_payload.sha;
+            const sha = process.env.SMARTCORE_SHA;
+            if (!sha) {
+              core.warning('no smartcore SHA to report; skipping status check');
+              return;
+            }
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             await github.rest.repos.createCommitStatus({
               owner: 'smartcorelib',
@@ -193,6 +249,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Optional ref run: bench a smartcore branch/SHA instead of the
+      # crates.io release. Trigger with, e.g.:
+      #   gh workflow run bench.yml -f smartcore_ref=main
+      # actions/checkout requires paths under $GITHUB_WORKSPACE, so the
+      # checkout lands at ./smartcore and a [patch.crates-io] override
+      # repoints the dep to it (config paths resolve relative to the
+      # project root that owns .cargo/config.toml). Same trick as
+      # smartcore's release-bench.yml. The ref's version must satisfy
+      # Cargo.toml's `smartcore = "0.6"` or cargo rejects the patch.
+      - name: Checkout smartcore at ${{ inputs.smartcore_ref }}
+        if: inputs.smartcore_ref != ''
+        uses: actions/checkout@v4
+        with:
+          repository: smartcorelib/smartcore
+          ref: ${{ inputs.smartcore_ref }}
+          path: smartcore
+
+      # The status check below reports this SHA back to the smartcore commit.
+      - name: Resolve smartcore commit SHA
+        id: smartref
+        if: inputs.smartcore_ref != ''
+        run: echo "sha=$(git -C smartcore rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Repoint smartcore dep to the local checkout
+        if: inputs.smartcore_ref != ''
+        run: |
+          mkdir -p .cargo
+          cat > .cargo/config.toml <<'CFG'
+          [patch.crates-io]
+          smartcore = { path = "smartcore" }
+          CFG
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -264,8 +352,10 @@ jobs:
       # benchmark-action's `customSmallerIsBetter` tool shape accepts. The
       # action's v1 API does not have a dedicated `iai-callgrind` tool key,
       # so we map the JSON through the custom-smaller path. Instruction
-      # counts are deterministic → a tight threshold is safe, and a >20%
-      # regression fails the job (and the status check posted below).
+      # counts are deterministic, so a 104% threshold (a >4% Ir regression)
+      # fails the job (and the status check posted below). Note ref runs
+      # (smartcore_ref) append to the same history, so the comparison
+      # baseline may be a smartcore ref rather than the crates.io release.
       - name: Store + chart iai benchmark history
         uses: benchmark-action/github-action-benchmark@v1
         with:
@@ -277,7 +367,7 @@ jobs:
           benchmark-data-dir-path: iai-dev
           comment-on-alert: true
           fail-on-alert: true
-          alert-threshold: "120%"
+          alert-threshold: "104%"
 
       - name: Upload iai JSON artifacts
         if: always()
@@ -291,19 +381,30 @@ jobs:
 
       # Post a pass/fail status check back to the smartcore commit. Runs on
       # both success and failure so branch protection sees the real outcome.
+      # `context.job` is the job NAME, not the conclusion, so the real
+      # outcome is passed in via `job.status` (correct inside an always()
+      # step). repository_dispatch carries the SHA in its payload; a ref
+      # run takes it from the Resolve smartcore commit SHA step. The `||`
+      # picks the payload when the resolve step was skipped (and vice versa).
       - name: Post status check back to smartcore
-        if: always() && github.event_name == 'repository_dispatch'
+        if: always() && (github.event_name == 'repository_dispatch' || (github.event_name == 'workflow_dispatch' && inputs.smartcore_ref != ''))
         uses: actions/github-script@v7
+        env:
+          SMARTCORE_SHA: ${{ steps.smartref.outputs.sha || github.event.client_payload.sha }}
+          JOB_STATUS: ${{ job.status }}
         with:
           github-token: ${{ secrets.BENCHES_STATUS_PAT }}
           script: |
-            const sha = context.payload.client_payload.sha;
-            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const job = context.job;
-            const state = job === 'success' ? 'success' : 'failure';
-            const desc = job === 'success'
+            const sha = process.env.SMARTCORE_SHA;
+            if (!sha) {
+              core.warning('no smartcore SHA to report; skipping status check');
+              return;
+            }
+            const state = process.env.JOB_STATUS === 'success' ? 'success' : 'failure';
+            const desc = state === 'success'
               ? 'iai-callgrind instruction counts within threshold'
-              : 'iai-callgrind regression detected (>2% on an instruction count)';
+              : 'iai-callgrind regression detected (>4% on an instruction count)';
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             await github.rest.repos.createCommitStatus({
               owner: 'smartcorelib',
               repo: 'smartcore',

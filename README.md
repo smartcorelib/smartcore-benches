@@ -126,11 +126,21 @@ and build flags with any results. Repeat memory runs in separate processes.
 
 ### Deterministic gate (iai-callgrind, Linux-only)
 
-`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor` gates `RandomForestRegressor::fit` + `predict` on fixed, deterministic data. `iai_lasso` and `iai_elastic_net` measure fits with fixed 1,024 × 32 inputs. Each tests both dense layouts with normalization and a row-major input without normalization. Setup runs outside the instruction count. Counts are machine-independent, so a tight `120%` alert threshold is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
+`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor` gates `RandomForestRegressor::fit` + `predict` on fixed, deterministic data. `iai_lasso` and `iai_elastic_net` measure fits with fixed 1,024 × 32 inputs. Each tests both dense layouts with normalization and a row-major input without normalization. Setup runs outside the instruction count. Counts are machine-independent, so a tight `104%` alert threshold (fails the job on a >4% Ir regression) is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
 
 ## CI
 
-`.github/workflows/bench.yml` runs on `repository_dispatch` from smartcore (`event_type: smartcore-dev-push`), on push to this repo's `main` (so harness edits re-record a baseline against the same published smartcore), on a nightly cron, and on manual `workflow_dispatch`.
+`.github/workflows/bench.yml` runs on `repository_dispatch` from smartcore (`event_type: smartcore-dev-push`), on push to this repo's `main` (so harness edits re-record a baseline against the same published smartcore), on a nightly cron, and on manual `workflow_dispatch`. Manual runs accept an optional `smartcore_ref` input: set it to a smartcore branch or SHA to bench that checkout instead of the crates.io release (wired in with a `[patch.crates-io]` override, the same trick as smartcore's own `release-bench.yml`):
+
+```bash
+# Bench the current tip of smartcore's main branch:
+gh workflow run bench.yml --repo smartcorelib/smartcore-benches -f smartcore_ref=main
+
+# Bench a specific commit:
+gh workflow run bench.yml --repo smartcorelib/smartcore-benches -f smartcore_ref=<sha>
+```
+
+A ref run skips the per-version `benches-results/` storage (its numbers are not a released version's snapshot), posts its status checks back to the benched SHA, and appends to the gh-pages trend like any other run.
 
 ### Dispatch contract
 
@@ -156,7 +166,7 @@ smartcore is resolved from crates.io (latest 0.6.x — currently 0.6.3) on every
 | Job | Runner | Tool | Role |
 |---|---|---|---|
 | `criterion` | ubuntu-latest | criterion (wall-clock) | Advisory. 200% alert threshold — noisy on shared runners, posts a comment but does not fail the job. |
-| `iai` | ubuntu-latest | iai-callgrind (instruction count) | Deterministic gate. 120% alert threshold, `fail-on-alert: true`. Posts a `success`/`failure` status check back to the smartcore commit. |
+| `iai` | ubuntu-latest | iai-callgrind (instruction count) | Deterministic gate. 104% alert threshold (fails on a >4% Ir regression), `fail-on-alert: true`. Posts a `success`/`failure` status check back to the smartcore commit. |
 
 ### Results
 
@@ -169,9 +179,9 @@ There are five places to read benchmark results, each answering a different ques
 | Tool | Chart URL | What it plots | Direction | Alert |
 |---|---|---|---|---|
 | criterion (wall-clock) | <https://smartcorelib.github.io/smartcore-benches/dev/> | `cargo bench` wall-clock time per bench (ns/iter) over time | lower = better | 200% — advisory, posts a comment, does not fail CI |
-| iai-callgrind (instruction count) | <https://smartcorelib.github.io/smartcore-benches/iai-dev/> | instructions retired (`Ir`) per bench — deterministic, machine-independent | lower = better | 120% — fails the `iai` job + status check |
+| iai-callgrind (instruction count) | <https://smartcorelib.github.io/smartcore-benches/iai-dev/> | instructions retired (`Ir`) per bench — deterministic, machine-independent | lower = better | 104% — fails the `iai` job + status check |
 
-Open the URLs above in a browser. Each page shows a searchable line chart (`data.js` is the raw history) with one series per benchmark name (e.g. `matmul/1024`, `iai_matmul::matmul::bench_matmul_256`). Hover for the value, range, and commit that produced each point. The iai page is the one to watch for regressions: instruction counts are deterministic on GitHub-hosted runners, so a >20% jump is a real code change, not noise.
+Open the URLs above in a browser. Each page shows a searchable line chart (`data.js` is the raw history) with one series per benchmark name (e.g. `matmul/1024`, `iai_matmul::matmul::bench_matmul_256`). Hover for the value, range, and commit that produced each point. The iai page is the one to watch for regressions: instruction counts are deterministic on GitHub-hosted runners, so a >4% jump is a real code change, not noise.
 
 #### 2. Per-version criterion snapshots (`benches-results/`)
 
@@ -203,9 +213,9 @@ The `iai.ndjson` is the upstream `summary.v3` schema (one `BenchmarkSummary` per
 
 The run page itself shows pass/fail per job:
 
-- `iai` job green ⇒ instruction counts within 120% of baseline (the merge gate).
+- `iai` job green ⇒ instruction counts within 104% of baseline (a >4% Ir regression trips the gate).
 - `criterion` job green ⇒ ran successfully; it does **not** gate (advisory only, 200% threshold).
-- The `iai` job also posts a `smartcore-benches / iai-callgrind` status check back to the smartcore commit that triggered the run (via `repository_dispatch`), so smartcore's branch protection can require it.
+- The `iai` job also posts a `smartcore-benches / iai-callgrind` status check back to the smartcore commit that triggered the run (via `repository_dispatch`, or via `workflow_dispatch` with `smartcore_ref` set), so smartcore's branch protection can require it.
 
 #### 5. Alert comments on commits/PRs
 
