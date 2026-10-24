@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792822561309,
+  "lastUpdate": 1792843074274,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -8162,6 +8162,138 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/smartcorelib/smartcore-benches/commit/7dd90300b9777a2354e8be53761edad42409be18"
         },
         "date": 1792822560740,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "iai_matmul::matmul::bench_matmul_64",
+            "value": 15862395,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_matmul::matmul::bench_matmul_256",
+            "value": 806885649,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_false",
+            "value": 789976097,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_true",
+            "value": 1058805291,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_false",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_true",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_svd::svd::bench_svd_square_128",
+            "value": 20311361,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_build_10k_x_10",
+            "value": 66599667,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_find_10k_x_10",
+            "value": 75986137,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_fast_path",
+            "value": 594691503,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_cross_axis",
+            "value": 858877451,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
+            "value": 594691902,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_regressor::random_forest_regressor::bench_random_forest_regressor_fit_200x10",
+            "value": 10325384,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_extra_trees_regressor::extra_trees_regressor::bench_extra_trees_regressor_fit_200x10",
+            "value": 7947139,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_decision_tree_classifier::decision_tree_classifier::bench_decision_tree_classifier_fit_200x10",
+            "value": 9944096,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_classifier::random_forest_classifier::bench_random_forest_classifier_fit_200x10",
+            "value": 31242298,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::row_major",
+            "value": 156622198,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::column_major",
+            "value": 158948857,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::without_normalization",
+            "value": 169064927,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::row_major",
+            "value": 147927920,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::column_major",
+            "value": 147643699,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::without_normalization",
+            "value": 172984231,
+            "unit": "Instructions"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "slievens",
+            "username": "slievens",
+            "email": "5492873+slievens@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "7dd90300b9777a2354e8be53761edad42409be18",
+          "message": "bench: add tree model benches (#11)\n\n* bench: add tree model benches\n\nAdd criterion and iai benches for ExtraTreesRegressor,\nDecisionTreeClassifier and RandomForestClassifier.\n\n- extra_trees_regressor: fit and predict on 3 data sizes\n  (100x10, 1000x10, 1000x50) x 3 tree counts (10, 50, 100).\n  An extra group changes m (1, 7, 25, 50) on 1000x50 data.\n- decision_tree_classifier: fit and predict on the same\n  3 data sizes x 3 split criteria (Gini, Entropy,\n  ClassificationError).\n- random_forest_classifier: fit and predict on the same\n  3 data sizes x 3 tree counts.\n- iai_*: fit + predict on fixed 200x10 data.\n\nThe criterion benches use dense_data and a new class_data\nhelper in src/lib.rs. Do not use DenseMatrix::rand: without\nthe smartcore std_rand feature, it gives a constant matrix,\nand then a tree cannot split.\n\nAdd the benches to Cargo.toml and bench.yml, and to the\nbench lists in README.md and AGENTS.md.\n\nCode written by a Large Language Model.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* ci: bench smartcore refs via workflow_dispatch input; tighten iai gate to 4%\n\n- bench.yml accepts an optional smartcore_ref input (a smartcore branch\n  or SHA). When set, both jobs check out smartcore at that ref into\n  smartcore/ and repoint the dep with a [patch.crates-io] override\n  (mirroring smartcore's release-bench.yml). Ref runs skip the\n  per-version benches-results storage and post their status checks\n  back to the benched SHA; the concurrency group keys ref runs by ref.\n- fix the iai status check: context.job is the job name, never\n  \"success\", so the posted state was always failure. The real\n  conclusion now comes from ${{ job.status }}.\n- iai alert threshold 120% -> 104% (fails on a >4% Ir regression);\n  status description and docs updated to match.\n- docs: README + AGENTS cover the new input and threshold; .gitignore\n  covers a local /.cargo/ patch override.\n\n* fix(ci): make smartcore_ref runs bench the ref, not the crates.io release (#12)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>\nCo-authored-by: Lorenzo <tunedconsulting@gmail.com>",
+          "timestamp": "2026-10-24T06:11:39Z",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/7dd90300b9777a2354e8be53761edad42409be18"
+        },
+        "date": 1792843073834,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
