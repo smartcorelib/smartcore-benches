@@ -45,6 +45,15 @@ pub fn dense_data(rows: usize, cols: usize, column_major: bool) -> (DenseMatrix<
     )
 }
 
+pub fn class_data(rows: usize, cols: usize) -> (DenseMatrix<f64>, Vec<u32>) {
+    let (x, y) = dense_data(rows, cols, false);
+    let labels = y
+        .iter()
+        .map(|t| ((t * 2.0).floor() as i64).rem_euclid(3) as u32)
+        .collect();
+    (x, labels)
+}
+
 pub fn ndarray_data(rows: usize, cols: usize) -> (Array2<f64>, Vec<f64>) {
     (
         Array2::from_shape_fn((rows, cols), |(row, col)| value(row, col)),

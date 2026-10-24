@@ -79,6 +79,18 @@ harness = false
 name = "random_forest_regressor"
 harness = false
 
+[[bench]]
+name = "extra_trees_regressor"
+harness = false
+
+[[bench]]
+name = "decision_tree_classifier"
+harness = false
+
+[[bench]]
+name = "random_forest_classifier"
+harness = false
+
 # iai-callgrind benches: Linux-only (Valgrind). The `#[cfg(not(target_os =
 # "linux"))]` fallback `fn main()` stub lets them compile on every platform
 # so `cargo bench --no-run` stays a portable gate, but the actual Valgrind
@@ -105,6 +117,18 @@ harness = false
 
 [[bench]]
 name = "iai_random_forest_regressor"
+harness = false
+
+[[bench]]
+name = "iai_extra_trees_regressor"
+harness = false
+
+[[bench]]
+name = "iai_decision_tree_classifier"
+harness = false
+
+[[bench]]
+name = "iai_random_forest_classifier"
 harness = false
 
 [[bench]]

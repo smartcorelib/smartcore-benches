@@ -122,11 +122,11 @@ and build flags with any results. Repeat memory runs in separate processes.
 
 ### Algorithm benches (criterion, legacy)
 
-`distance`, `fastpair`, `linear`, `naive_bayes`, `svc`, `random_forest_regressor`.
+`distance`, `fastpair`, `linear`, `naive_bayes`, `svc`, `random_forest_regressor`, `extra_trees_regressor`, `decision_tree_classifier`, `random_forest_classifier`.
 
 ### Deterministic gate (iai-callgrind, Linux-only)
 
-`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor` gates `RandomForestRegressor::fit` + `predict` on fixed, deterministic data. `iai_lasso` and `iai_elastic_net` measure fits with fixed 1,024 × 32 inputs. Each tests both dense layouts with normalization and a row-major input without normalization. Setup runs outside the instruction count. Counts are machine-independent, so a tight `104%` alert threshold (fails the job on a >4% Ir regression) is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
+`iai_matmul`, `iai_ab`, `iai_svd`, `iai_cover_tree`, `iai_iterator_mut` mirror the hot-path benches under Valgrind's instruction counter. `iai_random_forest_regressor`, `iai_extra_trees_regressor`, `iai_decision_tree_classifier` and `iai_random_forest_classifier` gate `RandomForestRegressor`, `ExtraTreesRegressor`, `DecisionTreeClassifier` and `RandomForestClassifier` `fit` + `predict` on fixed, deterministic data. `iai_lasso` and `iai_elastic_net` measure fits with fixed 1,024 × 32 inputs. Each tests both dense layouts with normalization and a row-major input without normalization. Setup runs outside the instruction count. Counts are machine-independent, so a tight `104%` alert threshold (fails the job on a >4% Ir regression) is safe on GitHub-hosted runners. See `.github/workflows/bench.yml` (`iai` job).
 
 ## CI
 
