@@ -138,6 +138,13 @@ jobs:
 
       # Persist the results to the gh-pages branch and generate the trend
       # page. auto-push: true lets the action commit the JSON directly.
+      # The ref-run repoint step edits the tracked Cargo.toml in place.
+      # benchmark-action switches to gh-pages and requires a clean tree;
+      # restore the file first or the history push fails.
+      - name: Restore patched Cargo.toml
+        if: inputs.smartcore_ref != ''
+        run: git checkout -- Cargo.toml
+
       - name: Store + chart benchmark history
         uses: benchmark-action/github-action-benchmark@v1
         with:
@@ -389,6 +396,12 @@ jobs:
       # fails the job (and the status check posted below). Note ref runs
       # (smartcore_ref) append to the same history, so the comparison
       # baseline may be a smartcore ref rather than the crates.io release.
+      # Same as the criterion job: restore the tracked Cargo.toml before
+      # benchmark-action switches to gh-pages.
+      - name: Restore patched Cargo.toml
+        if: inputs.smartcore_ref != ''
+        run: git checkout -- Cargo.toml
+
       - name: Store + chart iai benchmark history
         uses: benchmark-action/github-action-benchmark@v1
         with:
