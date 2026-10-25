@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792847439568,
+  "lastUpdate": 1792931372363,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -8428,6 +8428,138 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/smartcorelib/smartcore-benches/commit/1ad17b1afc02cce9b9c1ff9682a21e9545714095"
         },
         "date": 1792847438596,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "iai_matmul::matmul::bench_matmul_64",
+            "value": 15862395,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_matmul::matmul::bench_matmul_256",
+            "value": 806885649,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_false",
+            "value": 789976097,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_true",
+            "value": 1058805291,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_false",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_true",
+            "value": 1042028076,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_svd::svd::bench_svd_square_128",
+            "value": 20311361,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_build_10k_x_10",
+            "value": 66599667,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_find_10k_x_10",
+            "value": 75986137,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_fast_path",
+            "value": 594691503,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_cross_axis",
+            "value": 858877451,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
+            "value": 594691902,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_regressor::random_forest_regressor::bench_random_forest_regressor_fit_200x10",
+            "value": 10325384,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_extra_trees_regressor::extra_trees_regressor::bench_extra_trees_regressor_fit_200x10",
+            "value": 7947139,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_decision_tree_classifier::decision_tree_classifier::bench_decision_tree_classifier_fit_200x10",
+            "value": 9944096,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_classifier::random_forest_classifier::bench_random_forest_classifier_fit_200x10",
+            "value": 31242298,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::row_major",
+            "value": 156622198,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::column_major",
+            "value": 158948857,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::without_normalization",
+            "value": 169064927,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::row_major",
+            "value": 147927920,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::column_major",
+            "value": 147643699,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::without_normalization",
+            "value": 172984231,
+            "unit": "Instructions"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Lorenzo",
+            "username": "Mec-iS",
+            "email": "tunedconsulting@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "1ad17b1afc02cce9b9c1ff9682a21e9545714095",
+          "message": "fix(ci): restore patched Cargo.toml before gh-pages chart push (#13)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-24T13:08:30Z",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/1ad17b1afc02cce9b9c1ff9682a21e9545714095"
+        },
+        "date": 1792931371662,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
