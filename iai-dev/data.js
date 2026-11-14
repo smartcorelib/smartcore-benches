@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794583122383,
+  "lastUpdate": 1794665106081,
   "repoUrl": "https://github.com/smartcorelib/smartcore-benches",
   "entries": {
     "Benchmark": [
@@ -11046,6 +11046,138 @@ window.BENCHMARK_DATA = {
           {
             "name": "iai_elastic_net::elastic_net::without_normalization",
             "value": 172984513,
+            "unit": "Instructions"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Lorenzo",
+            "username": "Mec-iS",
+            "email": "tunedconsulting@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "1ad17b1afc02cce9b9c1ff9682a21e9545714095",
+          "message": "fix(ci): restore patched Cargo.toml before gh-pages chart push (#13)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-24T13:08:30Z",
+          "url": "https://github.com/smartcorelib/smartcore-benches/commit/1ad17b1afc02cce9b9c1ff9682a21e9545714095"
+        },
+        "date": 1794665104991,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "iai_matmul::matmul::bench_matmul_64",
+            "value": 15338017,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_matmul::matmul::bench_matmul_256",
+            "value": 798497107,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_false",
+            "value": 781587555,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_false_true",
+            "value": 1050416749,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_false",
+            "value": 1033639534,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_ab::ab::bench_ab_true_true",
+            "value": 1033639534,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_svd::svd::bench_svd_square_128",
+            "value": 19337601,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_build_10k_x_10",
+            "value": 60026727,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_cover_tree::cover_tree::bench_cover_tree_find_10k_x_10",
+            "value": 67099668,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_fast_path",
+            "value": 527582402,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_dense_iterator_mut_cross_axis",
+            "value": 791768302,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_iterator_mut::iterator_mut::bench_mutview_iterator_mut",
+            "value": 527582726,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_regressor::random_forest_regressor::bench_random_forest_regressor_fit_200x10",
+            "value": 10293656,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_extra_trees_regressor::extra_trees_regressor::bench_extra_trees_regressor_fit_200x10",
+            "value": 7920672,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_decision_tree_classifier::decision_tree_classifier::bench_decision_tree_classifier_fit_200x10",
+            "value": 9438083,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_random_forest_classifier::random_forest_classifier::bench_random_forest_classifier_fit_200x10",
+            "value": 29047151,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::row_major",
+            "value": 156092563,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::column_major",
+            "value": 158419222,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_lasso::lasso::without_normalization",
+            "value": 168016860,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::row_major",
+            "value": 147420906,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::column_major",
+            "value": 147138465,
+            "unit": "Instructions"
+          },
+          {
+            "name": "iai_elastic_net::elastic_net::without_normalization",
+            "value": 172182414,
             "unit": "Instructions"
           }
         ]
